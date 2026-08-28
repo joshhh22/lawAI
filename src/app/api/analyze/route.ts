@@ -4,9 +4,17 @@ import { AnalyzeRequest } from '@/lib/types';
 
 export async function POST(req: NextRequest) {
   try {
-    const body: AnalyzeRequest = await req.json();
+    let body: AnalyzeRequest;
+    try {
+      body = await req.json();
+    } catch {
+      return NextResponse.json(
+        { error: 'Format JSON permintaan tidak valid.' },
+        { status: 400 }
+      );
+    }
 
-    if (!body.caseText || body.caseText.trim().length < 5) {
+    if (!body || !body.caseText || body.caseText.trim().length < 5) {
       return NextResponse.json(
         { error: 'Deskripsi persoalan hukum minimal 5 karakter.' },
         { status: 400 }
