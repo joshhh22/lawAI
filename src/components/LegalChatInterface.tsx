@@ -17,7 +17,9 @@ import {
   RotateCcw,
   ExternalLink,
   HelpCircle,
-  FileText
+  FileText,
+  Info,
+  CheckCircle2
 } from 'lucide-react';
 import { ChatMessage, CaseAnalysis } from '@/lib/types';
 import { useChat } from '@/context/ChatContext';
@@ -92,7 +94,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
   const handleCopyMessage = (msg: ChatMessage) => {
     let copyContent = msg.text;
     if (msg.analysis) {
-      copyContent = `=== KONSULTASI HUKUMAI (${msg.analysis.identifiedIssue}) ===\n\nRINGKASAN:\n${msg.analysis.summary}\n\nDASAR HUKUM:\n${msg.analysis.legalBases.map((b) => `- ${b.documentTitle} Pasal ${b.articleNumber}: "${b.content}"`).join('\n')}\n\nANALISIS:\n${msg.analysis.analysis}\n\nLANGKAH PRAKTIS:\n${msg.analysis.actionableSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nSumber Resmi: law.web.id`;
+      copyContent = `=== TELAAH YURIDIS HUKUMAI (${msg.analysis.identifiedIssue}) ===\n\nKESIMPULAN:\n${msg.analysis.legalVerdict?.statusText || msg.analysis.summary}\n\nRINGKASAN:\n${msg.analysis.summary}\n\nDASAR HUKUM RESMI (peraturan.bpk.go.id):\n${msg.analysis.legalBases.map((b) => `- ${b.documentTitle} Pasal ${b.articleNumber}: "${b.content}" (Sumber: ${b.officialUrl})`).join('\n')}\n\nALASAN & ANALISIS:\n${msg.analysis.analysis}\n\nLANGKAH PRAKTIS:\n${msg.analysis.actionableSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nSumber Resmi: law.web.id & peraturan.bpk.go.id`;
     }
     navigator.clipboard.writeText(copyContent);
     setCopiedId(msg.id);
@@ -146,10 +148,10 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
             </div>
 
             <p className="text-xs sm:text-sm font-mono text-neutral-600 max-w-xl mx-auto leading-relaxed">
-              Konsultasikan persoalan hukum sehari-hari dengan asisten AI berbasis naskah undang-undang resmi pemerintah dan rujukan pasal yang dapat diverifikasi.
+              Konsultasikan persoalan hukum sehari-hari dengan asisten AI berbasis naskah undang-undang resmi pemerintah (peraturan.bpk.go.id) dan rujukan pasal yang dapat diverifikasi.
             </p>
 
-            {/* Pill Chips (Exact Screenshot Layout with Smooth Hover) */}
+            {/* Pill Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2.5 pt-2">
               {PILL_PRESETS.map((preset, idx) => (
                 <button
@@ -167,7 +169,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
         {/* Message Thread when Active */}
         {messages.length > 0 && (
-          <div className="space-y-6 pb-28">
+          <div className="space-y-8 pb-28">
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
 
@@ -216,44 +218,64 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
                       </p>
                     )}
 
-                    {/* Assistant Rich Response Structure */}
+                    {/* Assistant Structured Fact & Law Response (Screenshot style) */}
                     {!isUser && (
                       <div className="space-y-6">
-                        {/* Header Issue Tag */}
+                        {/* Friendly Opener */}
+                        <p className="text-sm font-mono text-neutral-700">
+                          Halo! Saya sudah menelusuri dasar hukum positif dan naskah regulasi resmi pemerintah mengenai persoalan ini.
+                        </p>
+
+                        {/* VERDICT BANNER BOX (Screenshot Factize style, adapted for HukumAI & peraturan.bpk.go.id) */}
                         {msg.analysis && (
-                          <div className="swiss-border-b pb-3.5 flex items-center justify-between">
-                            <div>
-                              <span className="editorial-meta text-[#c2410c] block">
-                                TELAAH YURIDIS RESMI
-                              </span>
-                              <h3 className="font-bold text-lg text-[#111215] mt-0.5">
-                                {msg.analysis.identifiedIssue}
-                              </h3>
+                          <div className="bg-[#fef9f2] border border-[#f5d9bc] p-4 sm:p-5 rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-2xs">
+                            <div className="flex items-start gap-3">
+                              <div className="w-8 h-8 rounded-full bg-[#fde6cf] text-[#c2410c] flex items-center justify-center shrink-0 mt-0.5">
+                                <Info className="w-4 h-4" />
+                              </div>
+                              <div>
+                                <span className="text-[10px] font-mono tracking-wider text-[#9a3412] uppercase font-bold block">
+                                  HASIL TELAAH HUKUM RESMI
+                                </span>
+                                <h4 className="font-bold text-sm sm:text-base text-[#7c2d12] leading-snug">
+                                  {msg.analysis.legalVerdict?.statusText || `TELAAH STATUS: ${msg.analysis.identifiedIssue.toUpperCase()}`}
+                                </h4>
+                              </div>
                             </div>
-                            {onSwitchToDocumentView && (
-                              <button
-                                onClick={() => onSwitchToDocumentView(msg.analysis!)}
-                                className="hidden sm:flex items-center gap-1.5 text-xs font-mono text-[#c2410c] hover:underline cursor-pointer bg-neutral-50 px-3 py-1.5 border border-neutral-200 rounded-md"
-                              >
-                                <FileText className="w-3.5 h-3.5" />
-                                <span>Buka Dokumen 12-Kolom</span>
-                              </button>
-                            )}
+
+                            <div className="flex items-center gap-1.5 px-3 py-1 bg-white/80 border border-[#f5d9bc] rounded-full text-[11px] font-mono text-[#9a3412] shrink-0 self-start sm:self-auto font-medium">
+                              <span className="w-2 h-2 rounded-full bg-[#c2410c] animate-pulse"></span>
+                              <span>Terverifikasi peraturan.bpk.go.id</span>
+                            </div>
                           </div>
                         )}
 
-                        {/* Summary / Direct Answer */}
-                        <div className="text-[15.5px] leading-relaxed font-serif text-[#111215]">
-                          {msg.text}
+                        {/* Section: Headline Title */}
+                        {msg.analysis && (
+                          <div className="swiss-border-b pb-3">
+                            <h3 className="font-bold text-lg text-[#111215] flex items-center gap-2">
+                              <span>🔍 Telaah Yuridis: {msg.analysis.identifiedIssue}</span>
+                            </h3>
+                          </div>
+                        )}
+
+                        {/* Section 1: 📄 Ringkasan Temuan & Ketentuan Hukum */}
+                        <div className="space-y-2">
+                          <span className="editorial-meta text-neutral-600 block flex items-center gap-1.5 font-bold">
+                            <span>📄 RINGKASAN TEMUAN & KETENTUAN HUKUM</span>
+                          </span>
+                          <div className="text-[15px] leading-relaxed font-serif text-[#111215] bg-[#fafafa] p-4 rounded-xl border border-neutral-200/80">
+                            {msg.text}
+                          </div>
                         </div>
 
-                        {/* Legal Bases & Articles (Expandable Section) */}
+                        {/* Section 2: 🏛️ Dasar Hukum Faktual (peraturan.bpk.go.id & JDIHN) */}
                         {msg.analysis && msg.analysis.legalBases.length > 0 && (
                           <div className="bg-[#fbfbfa] swiss-border p-5 rounded-xl space-y-3.5">
                             <div className="flex items-center justify-between">
                               <span className="editorial-meta font-bold text-neutral-800 flex items-center gap-1.5">
-                                <BookOpen className="w-3.5 h-3.5 text-[#c2410c]" />
-                                <span>DASAR HUKUM TERVERIFIKASI ({msg.analysis.legalBases.length} PASAL)</span>
+                                <BookOpen className="w-4 h-4 text-[#c2410c]" />
+                                <span>🏛️ DASAR HUKUM FAKTUAL ({msg.analysis.legalBases.length} PASAL DI PERATURAN.BPK.GO.ID)</span>
                               </span>
                               <button
                                 onClick={() => toggleSourceExpand(msg.id)}
@@ -265,57 +287,69 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
                             </div>
 
                             {/* List of articles */}
-                            <div className="space-y-2.5">
+                            <div className="space-y-3">
                               {msg.analysis.legalBases.map((art, idx) => (
-                                <div key={art.id || idx} className="bg-white p-3.5 swiss-border rounded-lg space-y-2">
-                                  <div className="flex items-center justify-between">
-                                    <span className="font-bold text-xs font-mono text-neutral-900">
-                                      {art.documentTitle} · PASAL {art.articleNumber}
-                                    </span>
+                                <div key={art.id || idx} className="bg-white p-4 swiss-border rounded-xl space-y-2.5 shadow-2xs">
+                                  <div className="flex flex-wrap items-center justify-between gap-2">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-bold text-xs font-mono text-neutral-900">
+                                        {art.documentTitle} · PASAL {art.articleNumber}
+                                      </span>
+                                    </div>
                                     <span className="text-[10px] font-mono px-2 py-0.5 bg-emerald-50 text-emerald-800 border border-emerald-300 font-semibold rounded">
-                                      {art.status}
+                                      Status: {art.status}
                                     </span>
                                   </div>
 
-                                  {expandedSources[msg.id] && (
-                                    <div className="mt-2 pt-2 border-t border-neutral-100 space-y-2.5 text-xs">
-                                      <p className="font-serif italic text-neutral-800 bg-[#fbfbfa] p-3 border-l-2 border-black rounded-r">
-                                        &ldquo;{art.content}&rdquo;
-                                      </p>
-                                      {art.explanation && (
-                                        <p className="font-mono text-neutral-600 text-[11.5px]">
-                                          💡 {art.explanation}
-                                        </p>
-                                      )}
-                                      <div className="pt-1 flex items-center justify-between text-[11px] font-mono text-neutral-500">
-                                        <span>Sumber: {art.officialSource}</span>
-                                        <a
-                                          href={art.officialUrl}
-                                          target="_blank"
-                                          rel="noopener noreferrer"
-                                          className="text-neutral-800 hover:text-[#c2410c] font-semibold flex items-center gap-1"
-                                        >
-                                          <span>Buka JDIH Resmi</span>
-                                          <ExternalLink className="w-3 h-3" />
-                                        </a>
-                                      </div>
-                                    </div>
+                                  <p className="font-serif italic text-neutral-800 bg-[#fbfbfa] p-3.5 border-l-2 border-[#c2410c] text-xs leading-relaxed rounded-r">
+                                    &ldquo;{art.content}&rdquo;
+                                  </p>
+
+                                  {art.explanation && (
+                                    <p className="font-mono text-neutral-700 text-xs leading-relaxed">
+                                      💡 <strong>Keterangan Resmi:</strong> {art.explanation}
+                                    </p>
                                   )}
+
+                                  <div className="pt-2 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-2 text-[11px] font-mono text-neutral-500">
+                                    <span>Sumber Terverifikasi: {art.officialSource}</span>
+                                    <a
+                                      href={art.officialUrl || 'https://peraturan.bpk.go.id'}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[#c2410c] hover:underline font-semibold flex items-center gap-1 bg-[#fef2f2] px-2.5 py-1 rounded border border-[#fecaca]"
+                                    >
+                                      <span>Buka di peraturan.bpk.go.id</span>
+                                      <ExternalLink className="w-3 h-3" />
+                                    </a>
+                                  </div>
                                 </div>
                               ))}
                             </div>
                           </div>
                         )}
 
-                        {/* Practical Action Steps */}
+                        {/* Section 3: ⚖️ Alasan Yuridis & Analisis Fakta */}
+                        {msg.analysis && msg.analysis.analysis && (
+                          <div className="space-y-2">
+                            <span className="editorial-meta text-[#c2410c] block font-bold">
+                              ⚖️ ALASAN YURIDIS & ANALISIS HUBUNGAN FAKTA:
+                            </span>
+                            <div className="text-xs sm:text-[13px] font-mono text-neutral-800 leading-relaxed bg-[#fbfbfa] p-4 border border-neutral-200 rounded-xl whitespace-pre-wrap">
+                              {msg.analysis.analysis}
+                            </div>
+                          </div>
+                        )}
+
+                        {/* Section 4: 🛡️ Langkah Praktis & Upaya Hukum */}
                         {msg.analysis && msg.analysis.actionableSteps.length > 0 && (
-                          <div className="space-y-2.5 pt-1">
-                            <span className="editorial-meta block text-[#c2410c]">
-                              LANGKAH PRAKTIS YANG DAPAT DILAKUKAN:
+                          <div className="space-y-2.5">
+                            <span className="editorial-meta block text-[#c2410c] font-bold">
+                              🛡️ LANGKAH PRAKTIS & JALUR PENYELESAIAN YANG DAPAT DITEMPUH:
                             </span>
                             <div className="space-y-2">
                               {msg.analysis.actionableSteps.map((step, idx) => (
-                                <div key={idx} className="flex items-start gap-2.5 text-xs font-mono text-neutral-800 bg-[#fbfbfa] p-3 border border-neutral-200 rounded-lg">
+                                <div key={idx} className="flex items-start gap-2.5 text-xs font-mono text-neutral-800 bg-[#fbfbfa] p-3.5 border border-neutral-200 rounded-xl">
                                   <span className="font-bold text-[#c2410c] shrink-0">[{idx + 1}]</span>
                                   <span>{step}</span>
                                 </div>
@@ -324,12 +358,12 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
                           </div>
                         )}
 
-                        {/* Uncertainty Notice */}
+                        {/* Section 5: ⚠️ Batasan & Ketidakpastian */}
                         {msg.analysis && msg.analysis.uncertainties.length > 0 && (
-                          <div className="text-[11px] font-mono text-neutral-500 bg-neutral-50 p-3.5 border border-neutral-200 rounded-lg space-y-1">
-                            <div className="flex items-center gap-1 font-semibold text-neutral-700">
+                          <div className="text-[11.5px] font-mono text-neutral-600 bg-neutral-50 p-3.5 border border-neutral-200 rounded-xl space-y-1">
+                            <div className="flex items-center gap-1.5 font-semibold text-neutral-800">
                               <AlertTriangle className="w-3.5 h-3.5 text-amber-600" />
-                              <span>Faktor yang Dapat Mengubah Analisis:</span>
+                              <span>Faktor yang Dapat Mengubah Analisis Hukum:</span>
                             </div>
                             <p>{msg.analysis.uncertainties.join(' ')}</p>
                           </div>
@@ -337,22 +371,20 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
                         {/* Message Actions */}
                         <div className="swiss-border-t pt-3.5 flex flex-wrap items-center justify-between gap-2 text-xs font-mono text-neutral-600">
-                          <div className="flex items-center gap-2">
-                            <button
-                              onClick={() => handleCopyMessage(msg)}
-                              className="flex items-center gap-1.5 px-3 py-1.5 swiss-border bg-white hover:bg-neutral-100 transition cursor-pointer rounded-md"
-                            >
-                              {copiedId === msg.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
-                              <span>{copiedId === msg.id ? 'Tersalin' : 'Salin Jawaban'}</span>
-                            </button>
-                          </div>
+                          <button
+                            onClick={() => handleCopyMessage(msg)}
+                            className="flex items-center gap-1.5 px-3 py-1.5 swiss-border bg-white hover:bg-neutral-100 transition cursor-pointer rounded-md"
+                          >
+                            {copiedId === msg.id ? <Check className="w-3.5 h-3.5 text-emerald-600" /> : <Copy className="w-3.5 h-3.5" />}
+                            <span>{copiedId === msg.id ? 'Tersalin' : 'Salin Jawaban Lengkap'}</span>
+                          </button>
 
                           {onSwitchToDocumentView && msg.analysis && (
                             <button
                               onClick={() => onSwitchToDocumentView(msg.analysis!)}
                               className="text-[#c2410c] hover:underline font-semibold flex items-center gap-1 cursor-pointer"
                             >
-                              <span>Buka Format Laporan Lengkap (12-Kolom)</span>
+                              <span>Buka Format Dokumen 12-Kolom</span>
                               <span>→</span>
                             </button>
                           )}
@@ -469,7 +501,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
         {/* Micro Disclaimer */}
         <p className="text-[11px] font-mono text-neutral-400 text-center mt-2">
-          HukumAI adalah asisten informasi hukum berbasis korpus resmi RI dan dapat membuat kekeliruan. Tetap verifikasi sumber resmi.
+          HukumAI terhubung ke korpus perundang-undangan resmi RI (peraturan.bpk.go.id). Bukan pengganti nasihat advokat.
         </p>
       </div>
     </div>

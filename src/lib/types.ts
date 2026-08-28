@@ -83,6 +83,11 @@ export interface CaseAnalysis {
   
   // Editorial Blocks (PRD Sections)
   summary: string; // 01 / Ringkasan
+  legalVerdict?: {
+    statusText: string;
+    level: 'MELANGGAR HUKUM / ILEGAL' | 'BERHAK MENUNTUT / KOMPENSASI' | 'DELIK ADUAN / PIDANA' | 'SAH BERSYARAT' | 'PERLU BUKTI TAMBAHAN';
+    bpkRef?: string;
+  };
   givenFacts: string[]; // 02 / Fakta yang Diberikan
   unknownFacts: string[]; // 03 / Yang Belum Diketahui
   legalBases: LegalArticle[]; // 04 / Dasar Hukum

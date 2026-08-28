@@ -33,7 +33,12 @@ Format respon wajib berupa JSON terstruktur yang valid dengan schema:
 {
   "domain": "Domain hukum",
   "identifiedIssue": "Isu hukum spesifik yang dihadapi",
-  "summary": "Ringkasan penjelasan dalam bahasa sederhana (1-2 paragraf padat)",
+  "summary": "Ringkasan temuan dan ketentuan hukum (lugas, santun, objektif)",
+  "legalVerdict": {
+    "statusText": "Contoh: KESIMPULAN: PENAHANAN IJAZAH TANPA PERJANJIAN ADALAH MELANGGAR HUKUM",
+    "level": "MELANGGAR HUKUM / ILEGAL | BERHAK MENUNTUT / KOMPENSASI | DELIK ADUAN / PIDANA | SAH BERSYARAT | PERLU BUKTI TAMBAHAN",
+    "bpkRef": "Rujukan Dasar: UU No. 6/2023 & PP No. 35/2021 (peraturan.bpk.go.id)"
+  },
   "givenFacts": ["Fakta 1 yang benar-benar dikatakan pengguna", "Fakta 2..."],
   "unknownFacts": ["Fakta/informasi penting yang belum diketahui tapi krusial"],
   "analysis": "Penjelasan mendalam mengenai hubungan fakta pengguna dengan ketentuan hukum yang berlaku",
@@ -195,24 +200,29 @@ function synthesizeCorpusAnalysis(casePrompt: string, domain: LegalDomain, artic
     return {
       domain: 'Ketenagakerjaan',
       identifiedIssue: 'Penahanan Dokumen Pribadi (Ijazah) oleh Pemberi Kerja',
-      summary: 'Pada prinsipnya, penahanan ijazah asli pekerja tidak memiliki dasar kewajiban dalam UU Ketenagakerjaan. Penahanan hanya dimungkinkan jika ada klausul tertulis yang disepakati secara sukarela dengan syarat keselamatan dokumen terjamin dan wajib dikembalikan begitu masa kerja/kewajiban selesai.',
+      legalVerdict: {
+        statusText: 'KESIMPULAN: PENAHANAN IJAZAH SEPIHAK ADALAH PERBUATAN MELANGGAR HUKUM',
+        level: 'MELANGGAR HUKUM / ILEGAL',
+        bpkRef: 'UU No. 6/2023 & Pasal 372 KUHP (peraturan.bpk.go.id)'
+      },
+      summary: 'Berdasarkan hukum ketenagakerjaan positif Indonesia, tidak ada kewajiban hukum bagi pekerja untuk menyerahkan ijazah asli kepada perusahaan. Penahanan ijazah sepihak tanpa perjanjian yang sah atau menolak mengembalikan ijazah saat hubungan kerja selesai melanggar hak dasar tenaga kerja dan dapat dikategorikan sebagai tindak pidana penggelapan hak milik.',
       givenFacts: [
-        'Pekerja menghadapi penahanan dokumen ijazah oleh pihak perusahaan',
-        'Pekerja mempertanyakan legalitas dan hak pengembalian ijazah'
+        'Pekerja menghadapi penahanan dokumen ijazah asli oleh pihak perusahaan',
+        'Pekerja mempertanyakan dasar legalitas penahanan dan hak pengembalian dokumen'
       ],
       unknownFacts: [
         'Apakah terdapat klausul perjanjian kerja tertulis mengenai penahanan ijazah?',
         'Apakah pekerja masih dalam ikatan dinas / pelatihan berbiaya perusahaan?',
-        'Apakah ada kewajiban ganti rugi atau inventaris yang belum diselesaikan?'
+        'Apakah ada kewajiban ganti rugi atau serah terima inventaris yang belum diselesaikan?'
       ],
-      analysis: 'Berdasarkan UU Ketenagakerjaan jo. UU Cipta Kerja No. 6/2023 dan Pasal 372 KUHP, penahanan sepihak atas barang milik orang lain tanpa dasar perjanjian yang sah atau menolak mengembalikannya saat hubungan kerja berakhir dapat dikategorikan sebagai penggelapan hak milik.',
+      analysis: 'Berdasarkan UU Ketenagakerjaan jo. UU Cipta Kerja No. 6/2023 (Pasal 86) dan Pasal 372 KUHP, penahanan sepihak atas barang milik orang lain tanpa dasar perjanjian sukarela atau menolak mengembalikannya saat hubungan kerja berakhir merupakan perbuatan melawan hukum. Pengusaha dilarang menyandera hak dokumen pekerja untuk membatasi kebebasan mencari penghidupan yang layak.',
       actionableSteps: [
         'Periksa kembali surat perjanjian kerja (PKWT/PKWTT) apakah ada klausul penahanan ijazah dan syarat pengembaliannya.',
-        'Ajukan surat permohonan pengembalian ijazah secara resmi dan tertulis kepada HRD/Manajemen perusahaan.',
-        'Jika perusahaan menolak tanpa alasan sah, lakukan pengaduan ke Pengawas Ketenagakerjaan pada Dinas Tenaga Kerja (Disnaker) setempat.'
+        'Ajukan surat somasi / permohonan pengembalian ijazah secara tertulis dan resmi kepada manajemen perusahaan.',
+        'Jika perusahaan menolak tanpa alasan sah, laporkan ke Pengawas Ketenagakerjaan di Dinas Tenaga Kerja (Disnaker) setempat atau laporkan dugaan penggelapan ke Kepolisian.'
       ],
       uncertainties: [
-        'Jika terdapat perjanjian ikatan dinas yang sah dan belum diselesaikan, perusahaan mungkin berhak menahan hingga kewajiban dipenuhi sesuai klausul kontrak.'
+        'Jika terdapat ikatan dinas yang sah dengan biaya pelatihan nyata dari perusahaan, penahanan dapat dipertahankan sementara hingga kewajiban ganti rugi dipenuhi sesuai kesepakatan tertulis.'
       ],
       followUpQuestions: [
         'Apakah Anda sudah menyelesaikan seluruh masa kontrak kerja atau mengundurkan diri sebelum waktu kontrak selesai?',
@@ -225,24 +235,29 @@ function synthesizeCorpusAnalysis(casePrompt: string, domain: LegalDomain, artic
     return {
       domain: 'Ketenagakerjaan',
       identifiedIssue: 'Hak Pemutusan Hubungan Kerja (PHK) dan Uang Kompensasi PKWT / Pesangon',
-      summary: 'Berdasarkan UU No. 6 Tahun 2023 dan PP No. 35 Tahun 2021, pekerja berhak atas uang kompensasi (untuk pekerja kontrak PKWT) atau pesangon + UPMK + penggantian hak (untuk PHK pekerja tetap). PHK tidak boleh dilakukan secara mendadak tanpa surat pemberitahuan minimal 14 hari kerja sebelumnya.',
+      legalVerdict: {
+        statusText: 'KESIMPULAN: PEKERJA BERHAK PENUH ATAS UANG KOMPENSASI & PESANGON SESUAI HUKUM',
+        level: 'BERHAK MENUNTUT / KOMPENSASI',
+        bpkRef: 'Pasal 61A UU No. 6/2023 jo. PP No. 35/2021 (peraturan.bpk.go.id)'
+      },
+      summary: 'Berdasarkan UU No. 6 Tahun 2023 (UU Cipta Kerja) dan PP No. 35 Tahun 2021, pekerja kontrak (PKWT) berhak atas uang kompensasi minimal masa kerja 1 bulan berturut-turut saat kontrak selesai. Untuk pekerja tetap (PKWTT) yang terkena PHK, pengusaha wajib membayarkan pesangon, uang penghargaan masa kerja (UPMK), dan penggantian hak.',
       givenFacts: [
         'Terjadi pemutusan hubungan kerja atau pengakhiran masa kontrak kerja',
-        'Pekerja menanyakan hak kompensasi atau pesangon'
+        'Pekerja menanyakan hak kompensasi atau pesangon yang belum dibayarkan'
       ],
       unknownFacts: [
         'Status hubungan kerja (pekerja tetap PKWTT atau kontrak PKWT)',
         'Masa kerja total di perusahaan yang bersangkutan',
         'Alasan spesifik dilakukannya PHK'
       ],
-      analysis: 'Pasal 61A UU No. 6/2023 mewajibkan pengusaha membayar uang kompensasi PKWT secara proporsional (masa kerja/12 x 1 bulan upah). Untuk PHK, Pasal 151 mewajibkan surat pemberitahuan 14 hari kerja dan Pasal 156 mengatur pesangon serta hak penggantian.',
+      analysis: 'Pasal 61A UU No. 6/2023 dan Pasal 15-17 PP No. 35/2021 mewajibkan pengusaha membayar uang kompensasi PKWT dengan rumus baku: (Masa Kerja / 12) x 1 Bulan Upah. Untuk PHK, Pasal 151 mewajibkan surat pemberitahuan 14 hari kerja dan Pasal 156 mengatur kewajiban pesangon.',
       actionableSteps: [
         'Minta rincian tertulis perhitungan hak akhir masa kerja / surat pengalaman kerja (paklaring).',
         'Lakukan perundingan Bipartit secara tertulis dengan manajemen jika nominal tidak sesuai ketentuan PP No. 35/2021.',
-        'Catatkan perselisihan hak ke Disnaker setempat untuk mediasi jika bipartit gagal.'
+        'Catatkan perselisihan hak ke Disnaker setempat untuk mediasi jika perundingan bipartit menemui jalan buntu.'
       ],
       uncertainties: [
-        'Besaran kompensasi dipengaruhi oleh alasan pengakhiran dan jenis kontrak kerja.'
+        'Besaran kompensasi dipengaruhi oleh alasan pengakhiran dan jenis kontrak kerja yang disepakati.'
       ],
       followUpQuestions: [
         'Berapa lama masa kerja Anda dan berapa besaran upah pokok per bulan?',
@@ -254,13 +269,18 @@ function synthesizeCorpusAnalysis(casePrompt: string, domain: LegalDomain, artic
   return {
     domain,
     identifiedIssue: `Analisis Ketentuan Hukum Terkait ${domain}`,
+    legalVerdict: {
+      statusText: `KESIMPULAN: PERSOALAN DIATUR DALAM REGULASI HUKUM ${domain.toUpperCase()}`,
+      level: 'PERLU BUKTI TAMBAHAN',
+      bpkRef: 'Database Resmi BPK RI (peraturan.bpk.go.id)'
+    },
     summary: 'Persoalan ini diatur dalam ketentuan peraturan perundang-undangan Indonesia yang mewajibkan adanya pemenuhan hak dan kewajiban sesuai asas hukum positif yang berlaku.',
     givenFacts: [casePrompt],
     unknownFacts: [
       'Dokumen bukti tertulis yang dimiliki para pihak',
       'Kronologi waktu dan peristiwa secara rinci'
     ],
-    analysis: `Berdasarkan ketentuan hukum positif di bidang ${domain}, setiap tindakan hukum harus berlandaskan aturan yang sah dan dapat diverifikasi melalui peraturan perundang-undangan resmi.`,
+    analysis: `Berdasarkan ketentuan hukum positif di bidang ${domain}, setiap tindakan hukum harus berlandaskan aturan yang sah dan dapat diverifikasi melalui peraturan perundang-undangan resmi (peraturan.bpk.go.id).`,
     actionableSteps: [
       'Dokumentasikan seluruh bukti kronologis dan dokumen pendukung.',
       'Upayakan penyelesaian secara damai atau klarifikasi tertulis.',
