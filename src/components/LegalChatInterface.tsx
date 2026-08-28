@@ -132,9 +132,9 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
   };
 
   return (
-    <div className="w-full bg-white swiss-border flex flex-col shadow-xs min-h-[620px] max-h-[85vh]">
+    <div className="w-full bg-white swiss-border flex flex-col shadow-xs h-[calc(100vh-150px)] min-h-[600px]">
       {/* Top Chat Header */}
-      <div className="bg-[#111215] text-[#fbfbfa] p-4 px-6 flex items-center justify-between swiss-border-b">
+      <div className="bg-[#111215] text-[#fbfbfa] p-4 px-6 flex items-center justify-between swiss-border-b shrink-0">
         <div className="flex items-center gap-3">
           <div className="w-8 h-8 bg-[#c2410c] text-white flex items-center justify-center font-bold text-sm">
             <Scale className="w-4 h-4" />
@@ -243,10 +243,10 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
               {/* Message Bubble Body */}
               <div
-                className={`max-w-3xl swiss-border p-5 ${
+                className={`max-w-4xl lg:max-w-5xl swiss-border p-5 sm:p-6 ${
                   isUser
                     ? 'bg-[#111215] text-[#fbfbfa] ml-8'
-                    : 'bg-white text-[#111215] shadow-xs mr-4 sm:mr-8 w-full'
+                    : 'bg-white text-[#111215] shadow-xs mr-2 sm:mr-6 w-full'
                 }`}
               >
                 {/* User Text */}

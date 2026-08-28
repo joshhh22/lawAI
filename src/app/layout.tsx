@@ -1,7 +1,6 @@
 import type { Metadata, Viewport } from 'next';
 import './globals.css';
-import Header from '@/components/Header';
-import Footer from '@/components/Footer';
+import AppShell from '@/components/AppShell';
 
 export const viewport: Viewport = {
   width: 'device-width',
@@ -22,12 +21,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id">
-      <body className="min-h-screen flex flex-col bg-[#fbfbfa] text-[#111215] selection:bg-[#c2410c] selection:text-white">
-        <Header />
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-8 py-8 sm:py-12">
+      <body className="h-screen w-screen overflow-hidden bg-[#fbfbfa] text-[#111215] selection:bg-[#c2410c] selection:text-white">
+        <AppShell>
           {children}
-        </main>
-        <Footer />
+        </AppShell>
       </body>
     </html>
   );
