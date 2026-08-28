@@ -82,15 +82,28 @@ ${contextSnippet || 'Tidak ada artikel korpus lokal yang langsung cocok. Lakukan
 
 Silakan analisis kasus di atas sesuai instruksi sistem dan hasilkan JSON yang valid sesuai struktur yang diminta.`;
 
-      const response = await aiClient.models.generateContent({
-        model: 'gemini-2.5-flash',
-        contents: promptWithContext,
-        config: {
-          tools: [{ googleSearch: {} }],
-          systemInstruction: HUKUM_AI_SYSTEM_INSTRUCTION,
-          responseMimeType: 'application/json'
-        }
-      });
+      let response;
+      try {
+        response = await aiClient.models.generateContent({
+          model: 'gemini-3.6-flash',
+          contents: promptWithContext,
+          config: {
+            tools: [{ googleSearch: {} }],
+            systemInstruction: HUKUM_AI_SYSTEM_INSTRUCTION,
+            responseMimeType: 'application/json'
+          }
+        });
+      } catch {
+        response = await aiClient.models.generateContent({
+          model: 'gemini-2.5-flash',
+          contents: promptWithContext,
+          config: {
+            tools: [{ googleSearch: {} }],
+            systemInstruction: HUKUM_AI_SYSTEM_INSTRUCTION,
+            responseMimeType: 'application/json'
+          }
+        });
+      }
 
       const responseText = response.text || '';
       
