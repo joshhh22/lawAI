@@ -1,4 +1,5 @@
 import { ChatSession, ChatMessage } from './types';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 const STORAGE_KEY = 'hukumai_chat_sessions_v1';
 const ACTIVE_SESSION_KEY = 'hukumai_active_session_id';
@@ -28,7 +29,35 @@ export function getSessionById(id: string): ChatSession | null {
 }
 
 /**
- * Save or update a chat session
+ * Background helper to sync session and messages to Supabase
+ */
+async function syncSessionToSupabase(session: ChatSession): Promise<void> {
+  if (!isSupabaseConfigured || !supabase) return;
+  try {
+    await supabase.from('chat_sessions').upsert({
+      id: session.id,
+      title: session.title,
+      domain: session.domain || 'Umum / Lainnya',
+      updated_at: session.updatedAt
+    });
+
+    const latestMsg = session.messages[session.messages.length - 1];
+    if (latestMsg) {
+      await supabase.from('chat_messages').upsert({
+        id: latestMsg.id,
+        session_id: session.id,
+        sender: latestMsg.sender,
+        text: latestMsg.text,
+        analysis: latestMsg.analysis || null
+      });
+    }
+  } catch (err) {
+    console.warn('Supabase sync warning:', err);
+  }
+}
+
+/**
+ * Save or update a chat session (locally + Supabase sync if enabled)
  */
 export function saveSession(session: ChatSession): void {
   if (typeof window === 'undefined') return;
@@ -49,6 +78,9 @@ export function saveSession(session: ChatSession): void {
 
     localStorage.setItem(STORAGE_KEY, JSON.stringify(sessions));
     localStorage.setItem(ACTIVE_SESSION_KEY, session.id);
+
+    // Sync in background
+    syncSessionToSupabase(updatedSession);
   } catch (e) {
     console.error('Error saving chat session:', e);
   }
@@ -65,6 +97,11 @@ export function deleteSession(id: string): void {
     
     if (getActiveSessionId() === id) {
       localStorage.removeItem(ACTIVE_SESSION_KEY);
+    }
+
+    // Delete in Supabase if configured
+    if (isSupabaseConfigured && supabase) {
+      supabase.from('chat_sessions').delete().eq('id', id).then(() => {});
     }
   } catch (e) {
     console.error('Error deleting chat session:', e);

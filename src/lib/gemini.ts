@@ -2,11 +2,10 @@ import { GoogleGenAI } from '@google/genai';
 import { CaseAnalysis, EvidenceStatus, LegalArticle, LegalDomain } from './types';
 import { detectDomain, retrieveRelevantArticles } from './legalRetrieval';
 
-const apiKey = process.env.GEMINI_API_KEY || '';
-let aiClient: GoogleGenAI | null = null;
-
-if (apiKey) {
-  aiClient = new GoogleGenAI({ apiKey });
+function getAiClient(): GoogleGenAI | null {
+  const key = process.env.GEMINI_API_KEY || '';
+  if (!key) return null;
+  return new GoogleGenAI({ apiKey: key });
 }
 
 export const HUKUM_AI_SYSTEM_INSTRUCTION = `Anda adalah reasoning dan explanation layer untuk platform HukumAI (law.web.id).
@@ -72,6 +71,7 @@ Catatan Relasi: ${art.relationNote || '-'}
   let parsedResponse: any = null;
   let groundingSources: { title: string; url: string; snippet?: string }[] = [];
 
+  const aiClient = getAiClient();
   if (aiClient) {
     try {
       const promptWithContext = `PERTANYAAN / KASUS PENGGUNA:
