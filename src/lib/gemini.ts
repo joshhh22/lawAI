@@ -8,13 +8,13 @@ function getAiClient(): GoogleGenAI | null {
   return new GoogleGenAI({ apiKey: key });
 }
 
-export const HUKUM_AI_SYSTEM_INSTRUCTION = `Anda adalah reasoning dan explanation layer untuk platform HukumAI (law.web.id).
+export const HUKUM_AI_SYSTEM_INSTRUCTION = `Anda adalah reasoning dan explanation layer untuk platform CekHukum (cekhukum.web.id).
 
 Anda BUKAN sumber hukum utama Indonesia.
 Anda WAJIB mengandalkan bukti hukum resmi yang diberikan dalam konteks dan hasil penelusuran peraturan pemerintah (JDIH, Peraturan.go.id, Mahkamah Agung, MK).
 
 ATURAN UTAMA:
-1. Jika pengguna hanya menyapa (seperti 'halo', 'tes', 'hi', 'selamat pagi'), sambut pengguna dengan ramah dan perkenalkan diri sebagai HukumAI.
+1. Jika pengguna hanya menyapa (seperti 'halo', 'tes', 'hi', 'selamat pagi'), sambut pengguna dengan ramah dan perkenalkan diri sebagai CekHukum.
 2. Jawab pertanyaan pengguna SECARA LANGSUNG, lugas, dan to-the-point di awal jawaban (misal: "Jangan diabaikan begitu saja atau melarikan diri, karena...").
 3. Jangan pernah mengarang pasal fiktif. Rujuk hanya pada hukum positif Indonesia yang berlaku (seperti KUHP, UU LLAJ, PP No. 80/2012, UU ITE, UU Cipta Kerja, dll).
 4. Bedakan secara tegas antara:
@@ -196,16 +196,16 @@ function synthesizeCorpusAnalysis(
   if (lower.length < 8 || lower === 'halo' || lower === 'tes' || lower === 'hi' || lower === 'p' || lower === 'selamat pagi' || lower === 'bisa bantu saya?') {
     return {
       domain: 'Umum / Lainnya',
-      identifiedIssue: 'Layanan Asistensi Informasi Hukum Indonesia (HukumAI)',
+      identifiedIssue: 'Layanan Asistensi Informasi Hukum Indonesia (CekHukum)',
       legalVerdict: {
-        statusText: 'HUKUMAI: ASISTEN PINTAR KONSULTASI & PENELUSURAN HUKUM INDONESIA',
+        statusText: 'CEKHUKUM: ASISTEN PINTAR KONSULTASI & PENELUSURAN HUKUM INDONESIA',
         level: 'SAH BERSYARAT',
         bpkRef: 'Korpus Resmi JDIHN & BPK RI (peraturan.bpk.go.id)'
       },
-      summary: 'Halo! Saya HukumAI, asisten kecerdasan buatan yang siap membantu Anda memahami persoalan hukum positif Indonesia dengan rujukan undang-undang resmi pemerintah yang dapat diverifikasi (peraturan.bpk.go.id). Silakan ceritakan masalah hukum yang sedang Anda hadapi.',
+      summary: 'Halo! Saya CekHukum, asisten kecerdasan buatan yang siap membantu Anda memahami persoalan hukum positif Indonesia dengan rujukan undang-undang resmi pemerintah yang dapat diverifikasi (peraturan.bpk.go.id). Silakan ceritakan masalah hukum yang sedang Anda hadapi.',
       givenFacts: ['Pengguna memulai percakapan / konsultasi awal'],
       unknownFacts: ['Kronologi kasus atau persoalan hukum yang ingin dikonsultasikan'],
-      analysis: 'HukumAI menghubungkan pertanyaan Anda dengan korpus resmi perundang-undangan Republik Indonesia (JDIHN, BPK RI, Peraturan.go.id, Mahkamah Agung, dan MK). Setiap jawaban dilengkapi kutipan pasal asli dan status keberlakuan peraturan.',
+      analysis: 'CekHukum menghubungkan pertanyaan Anda dengan korpus resmi perundang-undangan Republik Indonesia (JDIHN, BPK RI, Peraturan.go.id, Mahkamah Agung, dan MK). Setiap jawaban dilengkapi kutipan pasal asli dan status keberlakuan peraturan.',
       actionableSteps: [
         'Ketik persoalan hukum Anda secara bebas menggunakan bahasa sehari-hari.',
         'Sebutkan nomor pasal atau undang-undang jika Anda ingin mencari naskah peraturan tertentu.',

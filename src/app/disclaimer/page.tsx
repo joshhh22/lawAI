@@ -14,10 +14,10 @@ export default function DisclaimerPage() {
           <span>PERINGATAN RESMI & BATASAN TEKNOLOGI AI</span>
         </div>
         <h1 className="text-2xl sm:text-4xl font-bold uppercase tracking-tight text-[#111215]">
-          Peringatan, Batasan & Etika HukumAI
+          Peringatan, Batasan & Etika CekHukum
         </h1>
         <p className="text-sm font-mono text-neutral-600">
-          Pedoman transparansi, batasan operasional, dan tanggung jawab hukum penggunaan sistem informasi hukum digital law.web.id.
+          Pedoman transparansi, batasan operasional, dan tanggung jawab hukum penggunaan sistem informasi hukum digital cekhukum.web.id.
         </p>
       </div>
 
@@ -28,11 +28,11 @@ export default function DisclaimerPage() {
         </h2>
         <div className="space-y-3 text-sm text-neutral-800 leading-relaxed font-sans">
           <p>
-            <strong>HukumAI (law.web.id)</strong> adalah sistem berbasis kecerdasan buatan (Artificial Intelligence) 
+            <strong>CekHukum (cekhukum.web.id)</strong> adalah sistem berbasis kecerdasan buatan (Artificial Intelligence) 
             yang dirancang sebagai <strong>alat bantu edukasi dan penelusuran informasi hukum publik</strong> di Indonesia.
           </p>
           <p>
-            HukumAI <strong>bukan pengacara, bukan advokat, bukan kantor hukum, dan bukan lembaga peradilan</strong>. 
+            CekHukum <strong>bukan pengacara, bukan advokat, bukan kantor hukum, dan bukan lembaga peradilan</strong>. 
             Segala informasi, analisis, sintesis, atau penjelasan pasal yang disajikan oleh sistem ini 
             <strong> tidak boleh dianggap sebagai nasihat hukum resmi (formal legal advice)</strong>, pendapat hukum resmi (legal opinion), 
             atau jaminan atas hasil putusan perkara di pengadilan.
@@ -83,7 +83,7 @@ export default function DisclaimerPage() {
               Tanpa Pengumpulan Data Rahasia
             </h4>
             <p className="text-xs font-mono text-neutral-600 leading-relaxed">
-              HukumAI tidak meminta atau menyimpan NIK, kata sandi, rekening bank, atau rahasia pribadi yang dapat disalahgunakan.
+              CekHukum tidak meminta atau menyimpan NIK, kata sandi, rekening bank, atau rahasia pribadi yang dapat disalahgunakan.
             </p>
           </div>
         </div>

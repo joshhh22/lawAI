@@ -8,10 +8,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: 'HukumAI · cekhukum.web.id | Asisten & Pencarian Hukum Indonesia',
+  title: 'CekHukum (cekhukum.web.id) | Asisten & Pencarian Hukum Indonesia',
   description: 'Pahami hukum Indonesia dan temukan dasar hukumnya dengan AI berbasis korpus resmi JDIHN, BPK, Peraturan.go.id, Mahkamah Agung, dan MK.',
-  keywords: ['hukum indonesia', 'undang-undang', 'pasal kuhp', 'uu cipta kerja', 'uu ite', 'uu pdp', 'konsultasi hukum ai', 'jdihn'],
-  authors: [{ name: 'HukumAI Team' }],
+  keywords: ['cekhukum', 'hukum indonesia', 'undang-undang', 'pasal kuhp', 'uu cipta kerja', 'uu ite', 'uu pdp', 'konsultasi hukum ai', 'jdihn'],
+  authors: [{ name: 'CekHukum Team' }],
 };
 
 export default function RootLayout({

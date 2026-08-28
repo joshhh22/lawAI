@@ -15,7 +15,7 @@ export default function CaseDetailPage() {
 
   useEffect(() => {
     // In local demo, check sessionStorage or synthesize
-    const saved = sessionStorage.getItem(`hukumai_${params.id}`);
+    const saved = sessionStorage.getItem(`cekhukum_${params.id}`) || sessionStorage.getItem(`hukumai_${params.id}`);
     if (saved) {
       try {
         setAnalysis(JSON.parse(saved));

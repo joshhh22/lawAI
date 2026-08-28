@@ -202,7 +202,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
                       <>
                         <span className="font-bold text-[#c2410c] flex items-center gap-1">
                           <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-                          HukumAI
+                          CekHukum
                         </span>
                         <span>•</span>
                         <span>{msg.timestamp}</span>

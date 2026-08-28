@@ -18,7 +18,7 @@ export default function RegulationsPage() {
           Katalog Perundang-Undangan Terverifikasi
         </h1>
         <p className="text-sm font-mono text-neutral-600 max-w-2xl">
-          Kumpulan naskah undang-undang, kitab hukum, dan peraturan pemerintah yang telah terindeks secara struktural per pasal dalam basis data HukumAI.
+          Kumpulan naskah undang-undang, kitab hukum, dan peraturan pemerintah yang telah terindeks secara struktural per pasal dalam basis data CekHukum.
         </p>
       </div>
 

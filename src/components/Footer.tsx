@@ -14,7 +14,7 @@ export default function Footer() {
               Jaringan Dokumentasi & Informasi Hukum
             </h4>
             <p className="text-xs text-neutral-400 leading-relaxed font-mono">
-              HukumAI merujuk langsung ke basis data regulasi dan putusan resmi kementerian & lembaga peradilan Indonesia.
+              CekHukum merujuk langsung ke basis data regulasi dan putusan resmi kementerian & lembaga peradilan Indonesia.
             </p>
           </div>
 
@@ -109,7 +109,7 @@ export default function Footer() {
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-neutral-400" />
           <span>
-            HUKUMAI (law.web.id) · Bukan pengganti nasihat hukum advokat profesional.
+            CEKHUKUM (cekhukum.web.id) · Bukan pengganti nasihat hukum advokat profesional.
           </span>
         </div>
         <div>

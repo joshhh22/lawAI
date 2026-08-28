@@ -1,5 +1,5 @@
 -- ==============================================================================
--- HUKUMAI (law.web.id) - SUPABASE POSTGRESQL DATABASE SCHEMA
+-- CEKHUKUM (cekhukum.web.id) - SUPABASE POSTGRESQL DATABASE SCHEMA
 -- Jalankan skrip ini di SQL Editor dashboard Supabase Anda.
 -- ==============================================================================
 

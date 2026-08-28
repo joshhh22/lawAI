@@ -59,13 +59,13 @@ export default function DisclaimerModal({ forceOpen, onClose }: DisclaimerModalP
         </div>
 
         <h2 id="disclaimer-title" className="text-xl sm:text-2xl font-bold tracking-tight text-[#111215] mb-4">
-          Penting sebelum menggunakan HukumAI
+          Penting sebelum menggunakan CekHukum
         </h2>
 
         <div className="space-y-3.5 text-[14.5px] leading-relaxed text-neutral-700 swiss-border-b pb-6 mb-6">
           <p>
-            <strong>HukumAI</strong> adalah alat bantu informasi untuk membantu Anda memahami hukum Indonesia. 
-            HukumAI <strong>bukan pengacara, bukan lembaga penegak hukum, dan bukan pengganti nasihat atau pendampingan hukum profesional</strong>.
+            <strong>CekHukum</strong> adalah alat bantu informasi untuk membantu Anda memahami hukum Indonesia. 
+            CekHukum <strong>bukan pengacara, bukan lembaga penegak hukum, dan bukan pengganti nasihat atau pendampingan hukum profesional</strong>.
           </p>
           <p>
             Jawaban AI dapat mengandung kesalahan, tidak lengkap, atau tidak sesuai dengan kondisi kasus tertentu. 

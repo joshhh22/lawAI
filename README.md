@@ -1,8 +1,8 @@
-# HukumAI (law.web.id) 🏛️🇮🇩
+# CekHukum (cekhukum.web.id) 🏛️🇮🇩
 
 > **Pahami hukum Indonesia. Temukan dasar hukumnya. Tetap verifikasi.**
 
-**HukumAI** adalah platform kecerdasan buatan (*AI Legal Assistant*) publik yang membantu masyarakat Indonesia memahami persoalan hukum sehari-hari dengan rujukan naskah perundang-undangan positif yang dapat diverifikasi langsung ke portal pemerintah (**JDIHN, BPK RI [peraturan.bpk.go.id], Peraturan.go.id, Mahkamah Agung, dan Mahkamah Konstitusi**).
+**CekHukum** adalah platform kecerdasan buatan (*AI Legal Assistant*) publik yang membantu masyarakat Indonesia memahami persoalan hukum sehari-hari dengan rujukan naskah perundang-undangan positif yang dapat diverifikasi langsung ke portal pemerintah (**JDIHN, BPK RI [peraturan.bpk.go.id], Peraturan.go.id, Mahkamah Agung, dan Mahkamah Konstitusi**).
 
 ---
 
@@ -74,22 +74,22 @@ Langkah setup Supabase:
 
 ---
 
-### 5. 🌐 Menghubungkan Domain Kustom `law.web.id`
+### 5. 🌐 Menghubungkan Domain Kustom `cekhukum.web.id`
 1. Di Dashboard Vercel project Anda, masuk ke menu **Settings** ➔ pilih tab **Domains**.
-2. Masukkan nama domain Anda: `law.web.id` (dan `www.law.web.id`), lalu klik **Add**.
-3. Buka panel kontrol DNS tempat Anda membeli domain `law.web.id` (seperti Rumahweb, Niagahoster, DomaiNesia, IDCloudHost, dll).
+2. Masukkan nama domain Anda: `cekhukum.web.id` (dan `www.cekhukum.web.id`), lalu klik **Add**.
+3. Buka panel kontrol DNS IDCloudHost Anda.
 4. Tambahkan 2 baris DNS Record berikut:
    - **Type A**:
      - Name / Host: `@`
-     - Value / Destination: `76.76.21.21`
-     - TTL: `Auto` / `3600`
+     - Value / Destination: `216.198.79.1` (atau `76.76.21.21`)
+     - TTL: `Auto` / `14400`
    - **Type CNAME**:
      - Name / Host: `www`
      - Value / Destination: `cname.vercel-dns.com`
-     - TTL: `Auto` / `3600`
-5. Tunggu proses propagasi DNS (biasanya 5 hingga 30 menit). Vercel akan otomatis menerbitkan **Sertifikat SSL (HTTPS)** gratis dan website Anda resmi aktif di **https://law.web.id**!
+     - TTL: `Auto` / `14400`
+5. Tunggu proses propagasi DNS (biasanya 5 hingga 30 menit). Vercel akan otomatis menerbitkan **Sertifikat SSL (HTTPS)** gratis dan website Anda resmi aktif di **https://cekhukum.web.id**!
 
 ---
 
 ## ⚖️ Legal Disclaimer
-HukumAI adalah sarana edukasi dan penelusuran informasi hukum berbasis teknologi kecerdasan buatan. HukumAI **bukan pengacara, bukan kantor hukum, dan bukan pengganti nasihat atau pendampingan advokat resmi**.
+CekHukum adalah sarana edukasi dan penelusuran informasi hukum berbasis teknologi kecerdasan buatan. CekHukum **bukan pengacara, bukan kantor hukum, dan bukan pengganti nasihat atau pendampingan advokat resmi**.

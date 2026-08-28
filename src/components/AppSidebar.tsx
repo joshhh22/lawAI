@@ -115,7 +115,7 @@ export default function AppSidebar({
             </div>
           </Link>
         ) : (
-          <Link href="/" className="mx-auto" title="HukumAI Home">
+          <Link href="/" className="mx-auto" title="CekHukum Home">
             <div className="w-8 h-8 bg-white text-black hover:bg-[#c2410c] hover:text-white flex items-center justify-center font-bold text-sm transition rounded-md">
               <Scale className="w-4 h-4" />
             </div>

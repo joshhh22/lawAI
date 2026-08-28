@@ -35,12 +35,12 @@ export default function Header() {
           {/* Logo & Title */}
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-[#111215] text-white flex items-center justify-center font-bold text-lg tracking-tighter group-hover:bg-[#c2410c] transition">
-              H
+              C
             </div>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-bold text-xl tracking-tight text-[#111215] group-hover:text-[#c2410c] transition">
-                  HUKUMAI
+                  CEKHUKUM
                 </span>
                 <span className="editorial-meta bg-neutral-200 text-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold">
                   cekhukum.web.id

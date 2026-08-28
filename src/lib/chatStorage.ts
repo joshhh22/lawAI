@@ -1,8 +1,8 @@
 import { ChatSession, ChatMessage } from './types';
 import { supabase, isSupabaseConfigured } from './supabase';
 
-const STORAGE_KEY = 'hukumai_chat_sessions_v1';
-const ACTIVE_SESSION_KEY = 'hukumai_active_session_id';
+const STORAGE_KEY = 'cekhukum_chat_sessions_v1';
+const ACTIVE_SESSION_KEY = 'cekhukum_active_session_id';
 
 /**
  * Get all saved chat sessions sorted by updatedAt descending
@@ -10,7 +10,7 @@ const ACTIVE_SESSION_KEY = 'hukumai_active_session_id';
 export function getSavedSessions(): ChatSession[] {
   if (typeof window === 'undefined') return [];
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY) || localStorage.getItem('hukumai_chat_sessions_v1');
     if (!raw) return [];
     const parsed: ChatSession[] = JSON.parse(raw);
     return Array.isArray(parsed) ? parsed.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()) : [];

@@ -28,7 +28,7 @@ export default function AnalysisView({ analysis, onReset }: AnalysisViewProps) {
   const [reported, setReported] = useState(false);
 
   const handleCopyAll = () => {
-    const fullText = `=== HUKUMAI ANALISIS HUKUM (${analysis.caseNumber}) ===
+    const fullText = `=== CEKHUKUM ANALISIS HUKUM (${analysis.caseNumber}) ===
 Domain: ${analysis.domain}
 Isu: ${analysis.identifiedIssue}
 Tanggal: ${new Date(analysis.createdAt).toLocaleDateString('id-ID')}
@@ -48,7 +48,7 @@ ${analysis.actionableSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}
 05 / KETIDAKPASTIAN & BATASAN:
 ${analysis.uncertainties.map((u) => `- ${u}`).join('\n')}
 
-Sumber resmi: law.web.id (Diverifikasi berdasarkan Hukum Positif RI)`;
+Sumber resmi: cekhukum.web.id (Diverifikasi berdasarkan Hukum Positif RI)`;
 
     navigator.clipboard.writeText(fullText);
     setCopied(true);

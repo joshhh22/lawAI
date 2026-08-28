@@ -82,7 +82,7 @@ interface Translations {
 
 const TRANSLATIONS: Record<Language, Translations> = {
   id: {
-    appName: 'HUKUMAI',
+    appName: 'CEKHUKUM',
     appSubtitle: 'Legal AI Assistant',
     navChat: 'Obrolan',
     navSearch: 'Cari Regulasi',
@@ -116,7 +116,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     preset6Text: 'Rekan bisnis saya tidak membayar pesanan barang sesuai tanggal jatuh tempo surat perjanjian. Langkah hukum apa yang tepat untuk menuntut ganti rugi wanprestasi menurut KUHPerdata?',
     
     inputPlaceholder: 'Ketik persoalan hukum Anda, atau sebutkan pasal...',
-    inputDisclaimer: 'HukumAI terhubung ke korpus perundang-undangan resmi RI (peraturan.bpk.go.id). Bukan pengganti nasihat advokat.',
+    inputDisclaimer: 'CekHukum terhubung ke korpus perundang-undangan resmi RI (peraturan.bpk.go.id). Bukan pengganti nasihat advokat.',
     sessionActive: 'KONSULTASI HUKUM AKTIF',
     newTopicBtn: 'Mulai Topik Baru',
     you: 'Anda',
@@ -151,7 +151,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     systemModelSetting: 'Model AI & Dasar Data'
   },
   en: {
-    appName: 'HUKUMAI',
+    appName: 'CEKHUKUM',
     appSubtitle: 'Legal AI Assistant',
     navChat: 'Chat / Consultation',
     navSearch: 'Search Regulations',
@@ -185,7 +185,7 @@ const TRANSLATIONS: Record<Language, Translations> = {
     preset6Text: 'My business partner failed to pay for goods delivered according to our written agreement due date. What is the proper legal procedure to claim breach of contract (wanprestasi) under the Indonesian Civil Code?',
     
     inputPlaceholder: 'Type your legal question or cite a specific statute / article...',
-    inputDisclaimer: 'HukumAI is grounded in official Indonesian legislation (peraturan.bpk.go.id). Not a substitute for formal legal counsel.',
+    inputDisclaimer: 'CekHukum is grounded in official Indonesian legislation (peraturan.bpk.go.id). Not a substitute for formal legal counsel.',
     sessionActive: 'ACTIVE LEGAL CONSULTATION',
     newTopicBtn: 'Start New Topic',
     you: 'You',
