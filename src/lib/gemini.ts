@@ -137,6 +137,11 @@ Silakan analisis kasus di atas sesuai instruksi sistem dan hasilkan JSON yang va
     identifiedIssue: parsedResponse.identifiedIssue || `Analisis Persoalan ${domain}`,
     evidence,
     summary: parsedResponse.summary || 'Analisis hukum berbasis peraturan perundang-undangan Indonesia yang berlaku.',
+    legalVerdict: parsedResponse.legalVerdict || {
+      statusText: `TELAAH STATUS: ${parsedResponse.identifiedIssue || domain}`,
+      level: 'SAH BERSYARAT',
+      bpkRef: 'Database Resmi BPK RI (peraturan.bpk.go.id)'
+    },
     givenFacts: parsedResponse.givenFacts || [casePrompt],
     unknownFacts: parsedResponse.unknownFacts || ['Ketersediaan bukti tertulis atau kontrak resmi', 'Waktu kejadian spesifik'],
     legalBases: retrievedArticles,
@@ -192,6 +197,44 @@ function synthesizeCorpusAnalysis(casePrompt: string, domain: LegalDomain, artic
         'Apakah Anda memiliki pertanyaan seputar ketenagakerjaan (PHK / PKWT / Ijazah)?',
         'Apakah Anda ingin menanyakan tindak pidana (KUHP / UU ITE / UU PDP)?',
         'Apakah Anda memiliki persoalan perjanjian perdata atau perlindungan konsumen?'
+      ]
+    };
+  }
+
+  if (lower.includes('maling') || lower.includes('begal') || lower.includes('lawan maling') || lower.includes('bela diri') || (lower.includes('tersangka') && lower.includes('lawan'))) {
+    return {
+      domain: 'Hukum Pidana',
+      identifiedIssue: 'Pembelaan Terpaksa (Noodweer) Melawan Pelaku Kejahatan & Penetapan Status Tersangka',
+      legalVerdict: {
+        statusText: 'KESIMPULAN: TIDAK, ANDA TIDAK SERTA-MERTA BERSALAH — DILINDUNGI HAK PEMBELAAN TERPAKSA (PASAL 49 KUHP)',
+        level: 'SAH BERSYARAT',
+        bpkRef: 'Pasal 49 KUHP Positif jo. Pasal 34 UU No. 1/2023 (peraturan.bpk.go.id)'
+      },
+      summary: 'Tidak, Anda tidak sepenuhnya atau serta-merta bersalah di mata hukum pidana Indonesia. Tindakan melawan pelaku kejahatan (maling/pencuri) untuk melindungi keselamatan nyawa, kehormatan, atau harta benda diri sendiri/orang lain dari ancaman seketika yang melawan hukum diakui secara tegas sebagai Pembelaan Terpaksa (Noodweer) berdasarkan Pasal 49 ayat (1) KUHP dan Pasal 34 UU No. 1/2023 (KUHP Baru), yang merupakan alasan penghapus pidana (alasan pembenar) sehingga Anda tidak dapat dipidana.',
+      givenFacts: [
+        'Terjadi tindak pidana pencurian/kemalingan secara langsung',
+        'Korban melakukan tindakan perlawanan fisik terhadap pelaku maling',
+        'Penyidik kepolisian menetapkan korban sebagai tersangka'
+      ],
+      unknownFacts: [
+        'Apakah perlawanan dilakukan saat serangan masih berlangsung (seketika) atau saat maling sudah menyerah / melarikan diri jauh?',
+        'Tingkat luka/akibat yang diderita oleh pelaku maling (luka ringan, luka berat, atau meninggal dunia)',
+        'Alat yang digunakan korban untuk membela diri vs senjata yang dibawa oleh maling (proporsionalitas)'
+      ],
+      analysis: 'Berdasarkan hukum acara pidana (KUHAP), penetapan status Tersangka oleh polisi adalah pintu masuk formil penyelidikan/penyidikan untuk memeriksa fakta peristiwa secara utuh, BUKAN vonis bahwa Anda bersalah. Menurut Pasal 49 ayat (1) KUHP, barang siapa melakukan pembelaan terpaksa terhadap serangan yang melawan hukum TIDAK DAPAT DIPIDANA. Jika perlawanan melampaui batas akibat guncangan jiwa yang hebat karena ancaman tersebut, Pasal 49 ayat (2) KUHP (Noodweer Exces) tetap membebaskan Anda dari pidana. Jika pembelaan terpaksa terbukti, penyidik wajib menghentikan penyidikan dengan menerbitkan SP3 (Pasal 109 ayat 2 KUHAP).',
+      actionableSteps: [
+        'Gunakan hak Anda untuk didampingi oleh Advokat / Penasihat Hukum dalam setiap pemeriksaan Berita Acara Pemeriksaan (BAP) tambahan di kepolisian.',
+        'Jelaskan secara konsisten dalam BAP bahwa tindakan perlawanan dilakukan semata-mata karena rasa takut, ancaman bahaya mendadak, dan demi melindungi nyawa serta harta benda seketika.',
+        'Kumpulkan seluruh alat bukti pembelaan: rekaman CCTV di lokasi kejadian, saksi tetangga/keluarga yang mendengar teriakan, bukti senjata/alat yang dibawa maling, dan visum luka lebam pada diri Anda.',
+        'Melalui kuasa hukum, ajukan surat permohonan gelar perkara khusus dan permohonan penghentian penyidikan (SP3) kepada Kapolres/Kapolda berdasarkan Pasal 49 KUHP demi hukum.'
+      ],
+      uncertainties: [
+        'Jika perlawanan dilakukan setelah maling sudah tertangkap, diikat, tidak berdaya, atau dipukuli secara beramai-ramai saat sudah tidak ada ancaman (main hakim sendiri / eigenrichting), unsur pembelaan terpaksa dapat gugur.'
+      ],
+      followUpQuestions: [
+        'Apakah saat Anda melawan, maling tersebut membawa senjata tajam atau melakukan ancaman kekerasan fisik?',
+        'Apakah perlawanan dilakukan seketika di lokasi atau mengejar pelaku yang sudah kabur jauh?',
+        'Apakah Anda sudah didampingi oleh kuasa hukum saat memberikan keterangan BAP di kantor polisi?'
       ]
     };
   }
