@@ -97,9 +97,19 @@ export interface CaseAnalysis {
   }[];
 }
 
+export interface ChatMessage {
+  id: string;
+  sender: 'user' | 'assistant';
+  text: string;
+  timestamp: string;
+  analysis?: CaseAnalysis;
+  suggestedFollowUps?: string[];
+}
+
 export interface AnalyzeRequest {
   caseText: string;
   domain?: LegalDomain;
+  chatHistory?: { sender: 'user' | 'assistant'; text: string }[];
 }
 
 export interface SearchQuery {

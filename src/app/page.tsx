@@ -1,22 +1,41 @@
 'use client';
 
 import React, { useState } from 'react';
+import LegalChatInterface from '@/components/LegalChatInterface';
 import CaseInput from '@/components/CaseInput';
 import AnalysisView from '@/components/AnalysisView';
 import EditorialLoader from '@/components/EditorialLoader';
 import { CaseAnalysis } from '@/lib/types';
-import { ShieldCheck, BookOpen, Scale, ArrowRight, Search, FileText } from 'lucide-react';
+import { 
+  MessageSquare, 
+  FileText, 
+  BookOpen, 
+  Scale, 
+  ArrowRight, 
+  Search, 
+  ShieldCheck,
+  Sparkles
+} from 'lucide-react';
 import Link from 'next/link';
 
 export default function HomePage() {
-  const [analysis, setAnalysis] = useState<CaseAnalysis | null>(null);
+  const [activeView, setActiveView] = useState<'chat' | 'document'>('chat');
+  const [documentAnalysis, setDocumentAnalysis] = useState<CaseAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  const handleAnalyze = async (caseText: string) => {
+  const handleSwitchToDoc = (analysis: CaseAnalysis) => {
+    setDocumentAnalysis(analysis);
+    setActiveView('document');
+    setTimeout(() => {
+      window.scrollTo({ top: 200, behavior: 'smooth' });
+    }, 100);
+  };
+
+  const handleDocumentAnalyze = async (caseText: string) => {
     setIsLoading(true);
     setErrorMessage(null);
-    setAnalysis(null);
+    setDocumentAnalysis(null);
 
     try {
       const response = await fetch('/api/analyze', {
@@ -30,9 +49,8 @@ export default function HomePage() {
       }
 
       const data: CaseAnalysis = await response.json();
-      setAnalysis(data);
+      setDocumentAnalysis(data);
 
-      // Smooth scroll to analysis
       setTimeout(() => {
         window.scrollTo({ top: 300, behavior: 'smooth' });
       }, 100);
@@ -45,11 +63,11 @@ export default function HomePage() {
 
   return (
     <div className="space-y-16">
-      {/* Editorial Hero Section */}
-      <section className="space-y-6">
+      {/* Editorial Hero Header */}
+      <section className="space-y-4">
         <div className="flex items-center gap-3">
           <span className="editorial-meta text-[#c2410c] font-bold">
-            01 / SISTEM RETRIEVAL HUKUM DIGITAL
+            01 / SISTEM INFORMASI & KONSULTASI HUKUM DIGITAL
           </span>
           <span className="text-neutral-300">•</span>
           <span className="editorial-meta text-neutral-500">
@@ -57,41 +75,73 @@ export default function HomePage() {
           </span>
         </div>
 
-        <div className="space-y-2">
-          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111215] leading-[1.08] uppercase">
-            Pahami Hukum.<br />
-            <span className="font-serif italic font-normal text-neutral-800">Temukan Dasarnya.</span>
-          </h1>
-          <p className="text-base sm:text-lg text-neutral-600 max-w-2xl font-mono leading-relaxed pt-2">
-            Ceritakan persoalan hukum Anda dengan bahasa sehari-hari. 
-            AI menelusuri undang-undang resmi, pasal yang relevan, dan menyajikan analisis yang dapat diverifikasi.
-          </p>
-        </div>
-
-        {/* Case Input Area */}
-        <div className="pt-2">
-          <CaseInput onAnalyze={handleAnalyze} isLoading={isLoading} />
-        </div>
-
-        {/* Error Alert */}
-        {errorMessage && (
-          <div className="p-4 bg-red-50 swiss-border border-red-300 text-red-900 text-xs font-mono">
-            <strong>Terjadi Kendala:</strong> {errorMessage}
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 swiss-border-b pb-6">
+          <div className="space-y-1">
+            <h1 className="text-3xl sm:text-5xl font-bold tracking-tight text-[#111215] uppercase leading-tight">
+              Pahami Hukum.<br />
+              <span className="font-serif italic font-normal text-neutral-800">Temukan Dasarnya.</span>
+            </h1>
+            <p className="text-xs sm:text-sm text-neutral-600 font-mono pt-1 max-w-xl">
+              Asisten AI konsultasi hukum Indonesia berbasis naskah peraturan pemerintah dan rujukan pasal resmi JDIH.
+            </p>
           </div>
-        )}
 
-        {/* Loading Progress State */}
-        {isLoading && <EditorialLoader />}
+          {/* Mode Switcher Buttons */}
+          <div className="flex items-center gap-2 bg-[#f4f3ef] p-1 swiss-border self-start md:self-auto">
+            <button
+              onClick={() => setActiveView('chat')}
+              className={`flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider font-bold transition cursor-pointer ${
+                activeView === 'chat'
+                  ? 'bg-[#111215] text-white shadow-xs'
+                  : 'text-neutral-700 hover:text-black'
+              }`}
+            >
+              <MessageSquare className="w-3.5 h-3.5" />
+              <span>Mode Chat AI</span>
+            </button>
 
-        {/* Analysis Result View */}
-        {analysis && (
-          <div className="pt-6">
-            <AnalysisView analysis={analysis} onReset={() => setAnalysis(null)} />
+            <button
+              onClick={() => setActiveView('document')}
+              className={`flex items-center gap-2 px-4 py-2 text-xs font-mono uppercase tracking-wider font-bold transition cursor-pointer ${
+                activeView === 'document'
+                  ? 'bg-[#111215] text-white shadow-xs'
+                  : 'text-neutral-700 hover:text-black'
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5" />
+              <span>Mode Laporan 12-Kolom</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Main Interactive Interface (Chat vs Document View) */}
+      <section className="min-h-[600px]">
+        {activeView === 'chat' ? (
+          <LegalChatInterface onSwitchToDocumentView={handleSwitchToDoc} />
+        ) : (
+          <div className="space-y-8">
+            <CaseInput onAnalyze={handleDocumentAnalyze} isLoading={isLoading} />
+
+            {errorMessage && (
+              <div className="p-4 bg-red-50 swiss-border border-red-300 text-red-900 text-xs font-mono">
+                <strong>Terjadi Kendala:</strong> {errorMessage}
+              </div>
+            )}
+
+            {isLoading && <EditorialLoader />}
+
+            {documentAnalysis && (
+              <AnalysisView 
+                analysis={documentAnalysis} 
+                onReset={() => setDocumentAnalysis(null)} 
+              />
+            )}
           </div>
         )}
       </section>
 
-      {/* 3 Core Editorial Principles (PRD Section 10 & 25) */}
+      {/* 3 Core Editorial Principles (PRD Section 10) */}
       <section className="swiss-border-t pt-12">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-3 bg-white swiss-border p-6">
