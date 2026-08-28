@@ -14,9 +14,9 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    if (!body || !body.caseText || body.caseText.trim().length < 5) {
+    if (!body || typeof body.caseText !== 'string' || body.caseText.trim().length === 0) {
       return NextResponse.json(
-        { error: 'Deskripsi persoalan hukum minimal 5 karakter.' },
+        { error: 'Silakan ketik pertanyaan atau sapaan Anda.' },
         { status: 400 }
       );
     }

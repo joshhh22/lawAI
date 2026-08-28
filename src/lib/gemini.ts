@@ -15,18 +15,19 @@ Anda BUKAN sumber hukum utama Indonesia.
 Anda WAJIB mengandalkan bukti hukum resmi yang diberikan dalam konteks dan hasil penelusuran peraturan pemerintah (JDIH, Peraturan.go.id, Mahkamah Agung, MK).
 
 ATURAN UTAMA (PRD Section 23):
-1. Jangan pernah mengarang ketentuan undang-undang atau pasal.
-2. Jangan pernah mengarang nomor UU atau tahun peraturan.
-3. Jangan pernah membuat sitasi fiktif.
-4. Jangan mengklaim suatu hukum pasti berlaku mutlak jika fakta kasus belum lengkap.
-5. Bedakan secara tegas antara: (a) Fakta yang disampaikan, (b) Hukum tertulis/pasal, (c) Analisis, (d) Hal yang belum diketahui, dan (e) Ketidakpastian.
-6. Prioritaskan ketentuan hukum yang saat ini masih berlaku di Indonesia.
-7. Hargai relasi perubahan atau pencabutan (contoh: UU Cipta Kerja mengubah UU Ketenagakerjaan, revisi kedua UU ITE No. 1/2024 memperjelas Pasal 27A).
-8. Jika dasar hukum tidak cukup atau fakta tidak jelas, katakan dengan jujur: "Dasar hukum spesifik belum cukup untuk membuat kesimpulan mutlak".
-9. Jangan pernah menjanjikan hasil perkara pengadilan atau menyatakan pengguna pasti menang.
-10. Jangan menampilkan diri sebagai advokat atau kuasa hukum resmi.
-11. Gunakan Bahasa Indonesia yang lugas, terstruktur, santun, dan mudah dipahami masyarakat awam.
-12. Jelaskan istilah hukum latin/teknis jika digunakan (misal: Wanprestasi, PMH, Delik Aduan, Pacta Sunt Servanda).
+1. Jika pengguna hanya menyapa (seperti 'halo', 'tes', 'hi', 'selamat pagi', 'bisa bantu saya?'), sambut pengguna dengan ramah, perkenalkan diri Anda sebagai HukumAI, jelaskan lingkup hukum Indonesia yang dapat Anda bantu (Ketenagakerjaan, Pidana, ITE, Perdata, Perlindungan Konsumen, UU PDP, Pertanahan), dan undang pengguna untuk menjelaskan kasus hukumnya.
+2. Jangan pernah mengarang ketentuan undang-undang atau pasal.
+3. Jangan pernah mengarang nomor UU atau tahun peraturan.
+4. Jangan pernah membuat sitasi fiktif.
+5. Jangan mengklaim suatu hukum pasti berlaku mutlak jika fakta kasus belum lengkap.
+6. Bedakan secara tegas antara: (a) Fakta yang disampaikan, (b) Hukum tertulis/pasal, (c) Analisis, (d) Hal yang belum diketahui, dan (e) Ketidakpastian.
+7. Prioritaskan ketentuan hukum yang saat ini masih berlaku di Indonesia.
+8. Hargai relasi perubahan atau pencabutan (contoh: UU Cipta Kerja mengubah UU Ketenagakerjaan, revisi kedua UU ITE No. 1/2024 memperjelas Pasal 27A).
+9. Jika dasar hukum tidak cukup atau fakta tidak jelas, katakan dengan jujur: "Dasar hukum spesifik belum cukup untuk membuat kesimpulan mutlak".
+10. Jangan pernah menjanjikan hasil perkara pengadilan atau menyatakan pengguna pasti menang.
+11. Jangan menampilkan diri sebagai advokat atau kuasa hukum resmi.
+12. Gunakan Bahasa Indonesia yang lugas, terstruktur, santun, dan mudah dipahami masyarakat awam.
+13. Jelaskan istilah hukum latin/teknis jika digunakan (misal: Wanprestasi, PMH, Delik Aduan, Pacta Sunt Servanda).
 
 Format respon wajib berupa JSON terstruktur yang valid dengan schema:
 {
@@ -158,8 +159,38 @@ Silakan analisis kasus di atas sesuai instruksi sistem dan hasilkan JSON yang va
  * Robust deterministic fallback analysis when running without active API key
  */
 function synthesizeCorpusAnalysis(casePrompt: string, domain: LegalDomain, articles: LegalArticle[]) {
-  const lower = casePrompt.toLowerCase();
-  
+  const lower = casePrompt.toLowerCase().trim();
+
+  // Handle greetings and test messages warmly
+  const isGreetingOrTest = /^(halo|hai|hi|hey|tes|test|p|assalamu[']?alaikum|selamat\s*(pagi|siang|sore|malam)|bisa bantu|siapa kamu)\b/i.test(lower) || lower.length < 5;
+  if (isGreetingOrTest) {
+    return {
+      domain: 'Umum / Lainnya',
+      identifiedIssue: 'Konsultasi & Pengenalan Asisten HukumAI',
+      summary: 'Halo! Saya adalah HukumAI (law.web.id), asisten kecerdasan buatan spesialis hukum dan perundang-undangan Republik Indonesia. Saya dapat membantu Anda menelusuri dasar undang-undang, bunyi pasal, serta analisis hukum positif terkait ketenagakerjaan, pidana, ITE, data pribadi (PDP), perdata, perlindungan konsumen, dan pertanahan. Ada persoalan hukum atau pasal yang ingin Anda tanyakan hari ini?',
+      givenFacts: [
+        'Pengguna memulai sesi sapaan / uji coba konsultasi awal'
+      ],
+      unknownFacts: [
+        'Detail persoalan atau kasus hukum spesifik yang ingin dibahas'
+      ],
+      analysis: 'HukumAI menghubungkan pertanyaan Anda dengan korpus resmi perundang-undangan Republik Indonesia (JDIHN, BPK RI, Peraturan.go.id, Mahkamah Agung, dan MK). Setiap jawaban dilengkapi kutipan pasal asli dan status keberlakuan peraturan.',
+      actionableSteps: [
+        'Ketik persoalan hukum Anda secara bebas menggunakan bahasa sehari-hari.',
+        'Sebutkan nomor pasal atau undang-undang jika Anda ingin mencari naskah peraturan tertentu.',
+        'Atau klik salah satu contoh topik cepat di bawah ini untuk melihat contoh analisis.'
+      ],
+      uncertainties: [
+        'Analisis hukum yang mendalam membutuhkan uraian fakta atau kronologi peristiwa yang jelas.'
+      ],
+      followUpQuestions: [
+        'Apakah Anda memiliki pertanyaan seputar ketenagakerjaan (PHK / PKWT / Ijazah)?',
+        'Apakah Anda ingin menanyakan tindak pidana (KUHP / UU ITE / UU PDP)?',
+        'Apakah Anda memiliki persoalan perjanjian perdata atau perlindungan konsumen?'
+      ]
+    };
+  }
+
   if (lower.includes('ijazah') || lower.includes('tahan ijazah')) {
     return {
       domain: 'Ketenagakerjaan',
