@@ -72,6 +72,19 @@ export function deleteSession(id: string): void {
 }
 
 /**
+ * Clear all saved chat sessions
+ */
+export function clearAllSessions(): void {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(ACTIVE_SESSION_KEY);
+  } catch (e) {
+    console.error('Error clearing all chat sessions:', e);
+  }
+}
+
+/**
  * Get the currently active session ID
  */
 export function getActiveSessionId(): string | null {

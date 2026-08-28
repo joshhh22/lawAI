@@ -17,11 +17,12 @@ import {
   PanelLeftClose,
   PanelLeft,
   Trash2,
-  Clock,
+  Globe,
   Code2
 } from 'lucide-react';
 import { ChatSession } from '@/lib/types';
 import { getSavedSessions, deleteSession, formatTimeAgo } from '@/lib/chatStorage';
+import { useLanguage } from '@/context/LanguageContext';
 
 interface AppSidebarProps {
   collapsed: boolean;
@@ -30,16 +31,8 @@ interface AppSidebarProps {
   onSelectSession?: (sessionId: string) => void;
   onNewChat?: () => void;
   onOpenDisclaimer?: () => void;
+  onOpenSettings?: () => void;
 }
-
-const QUICK_TOPICS = [
-  { label: 'Penahanan Ijazah Kerja', icon: '📄' },
-  { label: 'Kompensasi PKWT & PHK', icon: '⚖️' },
-  { label: 'Pencemaran Medsos (UU ITE)', icon: '🛡️' },
-  { label: 'Penyalahgunaan Data (UU PDP)', icon: '🔒' },
-  { label: 'Klausula Baku Konsumen', icon: '🛒' },
-  { label: 'Wanprestasi & Ganti Rugi', icon: '📑' }
-];
 
 export default function AppSidebar({
   collapsed,
@@ -47,15 +40,26 @@ export default function AppSidebar({
   activeSessionId,
   onSelectSession,
   onNewChat,
-  onOpenDisclaimer
+  onOpenDisclaimer,
+  onOpenSettings
 }: AppSidebarProps) {
   const pathname = usePathname();
+  const { language, t } = useLanguage();
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [searchHistoryQuery, setSearchHistoryQuery] = useState('');
   
-  // Collapsible sub-menus (Screenshot 2: folded/collapsed by default to save maximum space for chat history!)
+  // Collapsible sub-menus
   const [showTopicsAccordion, setShowTopicsAccordion] = useState(false);
   const [showJdihAccordion, setShowJdihAccordion] = useState(false);
+
+  const quickTopics = [
+    { label: t.preset1Label, icon: '📄', text: t.preset1Text },
+    { label: t.preset2Label, icon: '⚖️', text: t.preset2Text },
+    { label: t.preset3Label, icon: '🛡️', text: t.preset3Text },
+    { label: t.preset4Label, icon: '🔒', text: t.preset4Text },
+    { label: t.preset5Label, icon: '🛒', text: t.preset5Text },
+    { label: t.preset6Label, icon: '📑', text: t.preset6Text }
+  ];
 
   // Load sessions from storage
   const loadSessions = () => {
@@ -89,7 +93,7 @@ export default function AppSidebar({
         collapsed ? 'w-16' : 'w-72'
       }`}
     >
-      {/* Top Header with Logo and Collapse icon (Screenshot 1: Factize header style) */}
+      {/* Top Header with Logo and Collapse icon */}
       <div className="h-16 px-4 flex items-center justify-between border-b border-neutral-800">
         {!collapsed ? (
           <Link href="/" className="flex items-center gap-2.5 group">
@@ -99,14 +103,14 @@ export default function AppSidebar({
             <div>
               <div className="flex items-center gap-1.5">
                 <span className="font-bold text-base tracking-tight text-white group-hover:text-[#c2410c] transition">
-                  HUKUMAI
+                  {t.appName}
                 </span>
-                <span className="text-[9px] font-mono bg-neutral-800 text-neutral-300 px-1 py-0.2 rounded">
-                  law.web.id
+                <span className="text-[9px] font-mono bg-neutral-800 text-neutral-300 px-1 py-0.2 rounded uppercase">
+                  {language}
                 </span>
               </div>
               <span className="text-[10px] font-mono text-neutral-400 block -mt-0.5">
-                Legal AI Assistant
+                {t.appSubtitle}
               </span>
             </div>
           </Link>
@@ -130,7 +134,7 @@ export default function AppSidebar({
         )}
       </div>
 
-      {/* Top Navigation Items (Screenshot 1: Factize top list) */}
+      {/* Top Navigation Items */}
       <div className="p-3 pb-2 space-y-1">
         <Link
           href="/"
@@ -139,10 +143,10 @@ export default function AppSidebar({
               ? 'bg-white text-black font-bold shadow-xs'
               : 'text-neutral-300 hover:text-white hover:bg-neutral-900'
           } ${collapsed ? 'justify-center px-0' : ''}`}
-          title="Obrolan / Konsultasi AI"
+          title={t.navChat}
         >
           <MessageSquare className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Obrolan</span>}
+          {!collapsed && <span>{t.navChat}</span>}
         </Link>
 
         <Link
@@ -152,10 +156,10 @@ export default function AppSidebar({
               ? 'bg-white text-black font-bold shadow-xs'
               : 'text-neutral-300 hover:text-white hover:bg-neutral-900'
           } ${collapsed ? 'justify-center px-0' : ''}`}
-          title="Cari Regulasi & Pasal"
+          title={t.navSearch}
         >
           <Search className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Cari Regulasi</span>}
+          {!collapsed && <span>{t.navSearch}</span>}
         </Link>
 
         <Link
@@ -165,16 +169,16 @@ export default function AppSidebar({
               ? 'bg-white text-black font-bold shadow-xs'
               : 'text-neutral-300 hover:text-white hover:bg-neutral-900'
           } ${collapsed ? 'justify-center px-0' : ''}`}
-          title="Katalog Peraturan RI"
+          title={t.navCatalog}
         >
           <BookOpen className="w-4 h-4 shrink-0" />
-          {!collapsed && <span>Katalog Hukum</span>}
+          {!collapsed && <span>{t.navCatalog}</span>}
         </Link>
       </div>
 
       <div className="mx-3 border-b border-neutral-800" />
 
-      {/* New Consultation CTA Button (Screenshot 1: + Cek Fakta Baru style) */}
+      {/* New Consultation CTA Button */}
       <div className="p-3">
         {onNewChat ? (
           <button
@@ -182,10 +186,10 @@ export default function AppSidebar({
             className={`w-full py-2.5 px-3 bg-[#1c2826] hover:bg-[#253633] text-emerald-300 border border-emerald-900/60 transition font-mono uppercase text-xs font-bold flex items-center justify-center gap-2 cursor-pointer rounded-lg shadow-xs active:scale-98 ${
               collapsed ? 'w-10 h-10 p-0 rounded-full mx-auto' : ''
             }`}
-            title="Mulai Konsultasi Baru"
+            title={t.newChat}
           >
             <Plus className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>+ Konsultasi Baru</span>}
+            {!collapsed && <span>{t.newChat}</span>}
           </button>
         ) : (
           <Link
@@ -193,15 +197,15 @@ export default function AppSidebar({
             className={`w-full py-2.5 px-3 bg-[#1c2826] hover:bg-[#253633] text-emerald-300 border border-emerald-900/60 transition font-mono uppercase text-xs font-bold flex items-center justify-center gap-2 cursor-pointer rounded-lg shadow-xs active:scale-98 ${
               collapsed ? 'w-10 h-10 p-0 rounded-full mx-auto' : ''
             }`}
-            title="Mulai Konsultasi Baru"
+            title={t.newChat}
           >
             <Plus className="w-4 h-4 shrink-0" />
-            {!collapsed && <span>+ Konsultasi Baru</span>}
+            {!collapsed && <span>{t.newChat}</span>}
           </Link>
         )}
       </div>
 
-      {/* Search Chat History (Screenshot 1: 'Cari riwayat...') */}
+      {/* Search Chat History */}
       {!collapsed && (
         <div className="px-3 pb-2">
           <div className="relative">
@@ -210,26 +214,26 @@ export default function AppSidebar({
               type="text"
               value={searchHistoryQuery}
               onChange={(e) => setSearchHistoryQuery(e.target.value)}
-              placeholder="Cari riwayat..."
+              placeholder={t.searchHistoryPlaceholder}
               className="w-full pl-8 pr-3 py-1.5 bg-[#17181c] border border-neutral-800 text-xs font-mono text-neutral-200 placeholder:text-neutral-500 rounded-lg focus:outline-none focus:border-neutral-600"
             />
           </div>
         </div>
       )}
 
-      {/* Scrollable Center: CHAT HISTORY (Expanded vertical space) */}
+      {/* Scrollable Center: CHAT HISTORY */}
       <div className="flex-1 overflow-y-auto px-3 space-y-4">
         {!collapsed && (
           <div className="space-y-1">
             <div className="flex items-center justify-between px-1 mb-1">
               <span className="editorial-meta text-neutral-500 text-[10px]">
-                RIWAYAT KONSULTASI ({filteredSessions.length})
+                {t.historyTitle} ({filteredSessions.length})
               </span>
             </div>
 
             {filteredSessions.length === 0 ? (
               <div className="p-4 text-center text-[11px] font-mono text-neutral-500 bg-[#17181c] rounded-lg border border-neutral-800/60">
-                {searchHistoryQuery ? 'Tidak ada riwayat yang cocok.' : 'Belum ada riwayat konsultasi. Ajukan pertanyaan untuk memulai.'}
+                {searchHistoryQuery ? t.historyEmptySearch : t.historyEmpty}
               </div>
             ) : (
               <div className="space-y-1">
@@ -258,7 +262,7 @@ export default function AppSidebar({
                         </div>
                       </div>
 
-                      {/* Delete icon on hover */}
+                      {/* Delete individual session icon */}
                       <button
                         onClick={(e) => handleDeleteSession(e, session.id)}
                         className="opacity-0 group-hover:opacity-100 p-1 hover:text-red-400 text-neutral-500 transition cursor-pointer"
@@ -274,7 +278,7 @@ export default function AppSidebar({
           </div>
         )}
 
-        {/* COLLAPSIBLE ACCORDION 1: TOPIK KASUS POPULER (Screenshot 2 - folded by default) */}
+        {/* COLLAPSIBLE ACCORDION 1: TOPIK KASUS POPULER */}
         {!collapsed && (
           <div className="pt-2 border-t border-neutral-800">
             <button
@@ -282,7 +286,7 @@ export default function AppSidebar({
               className="w-full flex items-center justify-between p-1.5 text-neutral-400 hover:text-white transition text-left cursor-pointer rounded"
             >
               <span className="editorial-meta text-neutral-400 text-[10px]">
-                TOPIK KASUS POPULER
+                {t.popularTopics}
               </span>
               {showTopicsAccordion ? (
                 <ChevronDown className="w-3.5 h-3.5" />
@@ -293,7 +297,7 @@ export default function AppSidebar({
 
             {showTopicsAccordion && (
               <div className="space-y-0.5 mt-1 animate-in fade-in slide-in-from-top-1">
-                {QUICK_TOPICS.map((topic, i) => (
+                {quickTopics.map((topic, i) => (
                   <button
                     key={i}
                     onClick={() => {
@@ -310,7 +314,7 @@ export default function AppSidebar({
           </div>
         )}
 
-        {/* COLLAPSIBLE ACCORDION 2: PORTAL JDIH PEMERINTAH (Screenshot 2 - folded by default) */}
+        {/* COLLAPSIBLE ACCORDION 2: PORTAL JDIH PEMERINTAH */}
         {!collapsed && (
           <div className="pt-2 border-t border-neutral-800">
             <button
@@ -318,7 +322,7 @@ export default function AppSidebar({
               className="w-full flex items-center justify-between p-1.5 text-neutral-400 hover:text-white transition text-left cursor-pointer rounded"
             >
               <span className="editorial-meta text-neutral-400 text-[10px]">
-                PORTAL JDIH PEMERINTAH RESMI
+                {t.officialJdihSources}
               </span>
               {showJdihAccordion ? (
                 <ChevronDown className="w-3.5 h-3.5" />
@@ -393,10 +397,17 @@ export default function AppSidebar({
             </div>
 
             <div className="pt-2 border-t border-neutral-800 text-[10.5px] text-neutral-500 space-y-1">
-              <p className="leading-snug">
-                HukumAI (law.web.id) · Berbasis Hukum Positif RI.
-              </p>
               <div className="flex items-center justify-between pt-1">
+                {onOpenSettings && (
+                  <button
+                    onClick={onOpenSettings}
+                    className="flex items-center gap-1 text-neutral-300 hover:text-white transition cursor-pointer font-bold"
+                  >
+                    <Settings className="w-3.5 h-3.5 text-[#c2410c]" />
+                    <span>{t.settings}</span>
+                  </button>
+                )}
+
                 {onOpenDisclaimer && (
                   <button
                     onClick={onOpenDisclaimer}
@@ -405,6 +416,7 @@ export default function AppSidebar({
                     Disclaimer
                   </button>
                 )}
+
                 <a
                   href="https://github.com/joshhh22/lawAI"
                   target="_blank"
@@ -426,14 +438,24 @@ export default function AppSidebar({
             >
               <PanelLeft className="w-4 h-4" />
             </button>
-            <span className="w-2 h-2 rounded-full bg-emerald-500" title="Gemini 2.5 Flash Active" />
+            
+            {onOpenSettings && (
+              <button
+                onClick={onOpenSettings}
+                className="p-1 text-neutral-400 hover:text-white transition cursor-pointer"
+                title={t.settings}
+              >
+                <Settings className="w-4 h-4 text-[#c2410c]" />
+              </button>
+            )}
+
             {onOpenDisclaimer && (
               <button
                 onClick={onOpenDisclaimer}
                 className="p-1 text-neutral-400 hover:text-amber-400 transition cursor-pointer"
                 title="Legal Disclaimer"
               >
-                <Settings className="w-4 h-4" />
+                <AlertCircle className="w-4 h-4" />
               </button>
             )}
           </div>

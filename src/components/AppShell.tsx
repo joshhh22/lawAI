@@ -3,7 +3,9 @@
 import React, { useState } from 'react';
 import AppSidebar from './AppSidebar';
 import DisclaimerModal from './DisclaimerModal';
+import SettingsModal from './SettingsModal';
 import { ChatProvider, useChat } from '@/context/ChatContext';
+import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
 import { 
   Zap, 
   ChevronDown, 
@@ -11,27 +13,35 @@ import {
   Code2, 
   Sparkles,
   PanelLeft,
-  PanelLeftClose
+  Settings as SettingsIcon,
+  Globe
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 
 function AppShellContent({ children }: { children: React.ReactNode }) {
-  // Start with collapsed sidebar on load for maximum clean canvas like screenshot!
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
   const [showModelInfo, setShowModelInfo] = useState(false);
   const pathname = usePathname();
   const { activeSessionId, selectSession, createNewChat } = useChat();
+  const { language, setLanguage, t } = useLanguage();
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#fbfbfa] text-[#111215]">
-      {/* Global First-Open Disclaimer Modal */}
+      {/* Global Disclaimer Modal */}
       <DisclaimerModal 
         forceOpen={showDisclaimer} 
         onClose={() => setShowDisclaimer(false)} 
       />
 
-      {/* Collapsible Left Sidebar with Real Persistent Chat History & Accordions */}
+      {/* Global Settings Modal (Language Switcher & Clear History) */}
+      <SettingsModal
+        isOpen={showSettings}
+        onClose={() => setShowSettings(false)}
+      />
+
+      {/* Collapsible Left Sidebar */}
       <AppSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -39,18 +49,19 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
         onSelectSession={(id) => selectSession(id)}
         onNewChat={() => createNewChat()}
         onOpenDisclaimer={() => setShowDisclaimer(true)}
+        onOpenSettings={() => setShowSettings(true)}
       />
 
       {/* Main View Area */}
       <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
-        {/* Minimalist Top Bar (Screenshot style: '⚡ Mode Flash ▾' & 'ⓘ Info') */}
+        {/* Minimalist Top Bar */}
         <header className="h-14 bg-transparent px-4 sm:px-8 flex items-center justify-between gap-4 shrink-0 z-20">
-          {/* Left Model Selector Pill */}
+          {/* Left Model Selector Pill & Sidebar Toggle */}
           <div className="flex items-center gap-3">
             {sidebarCollapsed && (
               <button
                 onClick={() => setSidebarCollapsed(false)}
-                className="p-1.5 swiss-border bg-white hover:bg-neutral-100 transition rounded-lg text-neutral-700 cursor-pointer"
+                className="p-1.5 swiss-border bg-white hover:bg-neutral-100 transition rounded-lg text-neutral-700 cursor-pointer shadow-2xs"
                 title="Buka Menu Sidebar"
               >
                 <PanelLeft className="w-4 h-4" />
@@ -92,16 +103,37 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
             </div>
           </div>
 
-          {/* Right Info / Batasan AI & GitHub */}
+          {/* Right Actions: Language, Settings, Info & GitHub */}
           <div className="flex items-center gap-2 font-mono text-xs">
+            {/* Quick Language Toggle Pill */}
+            <button
+              onClick={() => setLanguage(language === 'id' ? 'en' : 'id')}
+              className="flex items-center gap-1 px-2.5 py-1.5 bg-white/80 swiss-border hover:bg-white transition text-xs font-mono text-neutral-700 rounded-full cursor-pointer shadow-2xs"
+              title="Ganti Bahasa / Switch Language"
+            >
+              <Globe className="w-3.5 h-3.5 text-[#c2410c]" />
+              <span className="font-bold uppercase">{language}</span>
+            </button>
+
+            {/* Settings Trigger */}
+            <button
+              onClick={() => setShowSettings(true)}
+              className="p-1.5 text-neutral-600 hover:text-black hover:bg-white/80 transition rounded-full cursor-pointer"
+              title={t.settings}
+            >
+              <SettingsIcon className="w-4 h-4" />
+            </button>
+
+            {/* Info / Disclaimer Trigger */}
             <button
               onClick={() => setShowDisclaimer(true)}
               className="flex items-center gap-1.5 px-3 py-1.5 text-neutral-600 hover:text-black hover:bg-white/80 transition cursor-pointer rounded-full text-xs font-mono"
             >
               <Info className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Info & Batasan AI</span>
+              <span className="hidden sm:inline">{t.navDisclaimer}</span>
             </button>
 
+            {/* GitHub Link */}
             <a
               href="https://github.com/joshhh22/lawAI"
               target="_blank"
@@ -127,8 +159,10 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   return (
-    <ChatProvider>
-      <AppShellContent>{children}</AppShellContent>
-    </ChatProvider>
+    <LanguageProvider>
+      <ChatProvider>
+        <AppShellContent>{children}</AppShellContent>
+      </ChatProvider>
+    </LanguageProvider>
   );
 }

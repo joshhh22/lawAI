@@ -7,6 +7,7 @@ import {
   getSessionById, 
   saveSession, 
   deleteSession as deleteSessionStorage,
+  clearAllSessions,
   getActiveSessionId, 
   setActiveSessionId,
   generateSessionTitle 
@@ -19,6 +20,7 @@ interface ChatContextType {
   createNewChat: () => void;
   selectSession: (id: string) => void;
   deleteSession: (id: string) => void;
+  clearAllChatSessions: () => void;
   addMessageToActiveSession: (msg: ChatMessage) => void;
   updateActiveSessionWithAnalysis: (userText: string, analysis: CaseAnalysis) => void;
 }
@@ -68,6 +70,12 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
     if (activeSessionId === id) {
       createNewChat();
     }
+  };
+
+  const clearAllChatSessions = () => {
+    clearAllSessions();
+    setSessions([]);
+    createNewChat();
   };
 
   const addMessageToActiveSession = (msg: ChatMessage) => {
@@ -152,6 +160,7 @@ export function ChatProvider({ children }: { children: React.ReactNode }) {
         createNewChat,
         selectSession,
         deleteSession,
+        clearAllChatSessions,
         addMessageToActiveSession,
         updateActiveSessionWithAnalysis
       }}
