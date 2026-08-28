@@ -106,6 +106,15 @@ export interface ChatMessage {
   suggestedFollowUps?: string[];
 }
 
+export interface ChatSession {
+  id: string;
+  title: string;
+  createdAt: string;
+  updatedAt: string;
+  messages: ChatMessage[];
+  domain?: LegalDomain;
+}
+
 export interface AnalyzeRequest {
   caseText: string;
   domain?: LegalDomain;

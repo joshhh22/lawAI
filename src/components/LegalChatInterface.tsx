@@ -20,6 +20,7 @@ import {
   FileText
 } from 'lucide-react';
 import { ChatMessage, CaseAnalysis } from '@/lib/types';
+import { useChat } from '@/context/ChatContext';
 import LegalSourceCard from './LegalSourceCard';
 import EditorialLoader from './EditorialLoader';
 
@@ -36,7 +37,7 @@ const PILL_PRESETS = [
 ];
 
 export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChatInterfaceProps) {
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const { activeSession, createNewChat, updateActiveSessionWithAnalysis } = useChat();
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
@@ -44,6 +45,8 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
   const [showPresetsMenu, setShowPresetsMenu] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const messages = activeSession?.messages || [];
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -57,15 +60,6 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
     const text = (textToSend || inputText).trim();
     if (!text || isLoading) return;
 
-    const userMessageId = `user_${Date.now()}`;
-    const userMsg: ChatMessage = {
-      id: userMessageId,
-      sender: 'user',
-      text,
-      timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-    };
-
-    setMessages((prev) => [...prev, userMsg]);
     if (!textToSend) setInputText('');
     setShowPresetsMenu(false);
     setIsLoading(true);
@@ -86,27 +80,10 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
       const analysis: CaseAnalysis = await res.json();
 
-      const assistantMsg: ChatMessage = {
-        id: `ai_${Date.now()}`,
-        sender: 'assistant',
-        text: analysis.summary,
-        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' }),
-        analysis,
-        suggestedFollowUps: analysis.followUpQuestions || [
-          'Bagaimana prosedur jika mediasi gagal?',
-          'Berapa batas daluwarsa penuntutan untuk kasus ini?'
-        ]
-      };
-
-      setMessages((prev) => [...prev, assistantMsg]);
+      // Automatically persists and adds session in sidebar!
+      updateActiveSessionWithAnalysis(text, analysis);
     } catch (error) {
-      const errorMsg: ChatMessage = {
-        id: `err_${Date.now()}`,
-        sender: 'assistant',
-        text: 'Maaf, terjadi kendala saat menelusuri korpus hukum. Silakan periksa koneksi atau coba ulangi pertanyaan Anda.',
-        timestamp: new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })
-      };
-      setMessages((prev) => [...prev, errorMsg]);
+      console.error('Error in chat:', error);
     } finally {
       setIsLoading(false);
     }
@@ -129,10 +106,6 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
     }));
   };
 
-  const handleClearChat = () => {
-    setMessages([]);
-  };
-
   return (
     <div className="w-full flex-1 flex flex-col justify-between relative min-h-[calc(100vh-100px)]">
       {/* Top action bar when messages exist */}
@@ -140,7 +113,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
         <div className="flex items-center justify-between pb-4 swiss-border-b mb-6 animate-in fade-in">
           <div className="flex items-center gap-2">
             <span className="editorial-meta text-[#c2410c] font-bold">
-              SESI KONSULTASI AKTIF
+              {activeSession?.title || 'KONSULTASI HUKUM AKTIF'}
             </span>
             <span className="text-neutral-300">•</span>
             <span className="text-xs font-mono text-neutral-500">
@@ -149,8 +122,8 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
           </div>
 
           <button
-            onClick={handleClearChat}
-            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase bg-white swiss-border hover:bg-neutral-100 transition text-neutral-700 cursor-pointer rounded-md"
+            onClick={() => createNewChat()}
+            className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-mono uppercase bg-white swiss-border hover:bg-neutral-100 transition text-neutral-700 cursor-pointer rounded-md shadow-2xs"
           >
             <RotateCcw className="w-3.5 h-3.5" />
             <span>Mulai Topik Baru</span>
@@ -160,7 +133,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
       {/* Main Conversation / Hero Area */}
       <div className="flex-1 flex flex-col justify-center">
-        {/* HERO CANVAS (Screenshot Aesthetic, 10000% Better) */}
+        {/* HERO CANVAS (Clean minimalist initial state) */}
         {messages.length === 0 && (
           <div className="my-auto py-12 px-4 text-center space-y-8 max-w-3xl mx-auto animate-in fade-in duration-300">
             {/* Title with Subtle Rhombus Graphic Accent */}
@@ -424,7 +397,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
         )}
       </div>
 
-      {/* FLOATING BOTTOM INPUT BOX (Screenshot Design: Rounded Pill, +, and Arrow Up button) */}
+      {/* FLOATING BOTTOM INPUT BOX */}
       <div className="sticky bottom-4 z-30 pt-4 max-w-3xl w-full mx-auto">
         {/* Preset Menu Popup if '+' is clicked */}
         {showPresetsMenu && (
@@ -482,7 +455,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
               <Plus className="w-4 h-4" />
             </button>
 
-            {/* Right '↑' Send Button (Screenshot dark circle) */}
+            {/* Right '↑' Send Button */}
             <button
               type="submit"
               disabled={!inputText.trim() || isLoading}
@@ -494,7 +467,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
           </div>
         </form>
 
-        {/* Micro Disclaimer under input (Screenshot text style) */}
+        {/* Micro Disclaimer */}
         <p className="text-[11px] font-mono text-neutral-400 text-center mt-2">
           HukumAI adalah asisten informasi hukum berbasis korpus resmi RI dan dapat membuat kekeliruan. Tetap verifikasi sumber resmi.
         </p>
