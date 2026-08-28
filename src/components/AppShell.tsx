@@ -4,14 +4,14 @@ import React, { useState, useEffect } from 'react';
 import AppSidebar from './AppSidebar';
 import DisclaimerModal from './DisclaimerModal';
 import { 
-  PanelLeft, 
-  PanelLeftClose, 
-  Search, 
-  AlertCircle, 
+  Zap, 
+  ChevronDown, 
+  Info, 
   Code2, 
-  ExternalLink,
-  Scale,
-  Menu
+  Scale, 
+  Search,
+  Sparkles,
+  ShieldCheck
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -21,24 +21,11 @@ interface AppShellProps {
 }
 
 export default function AppShell({ children }: AppShellProps) {
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  // Start with collapsed sidebar on load for maximum clean canvas like screenshot!
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [showDisclaimer, setShowDisclaimer] = useState(false);
+  const [showModelInfo, setShowModelInfo] = useState(false);
   const pathname = usePathname();
-
-  // On small screens, start collapsed by default
-  useEffect(() => {
-    if (window.innerWidth < 1024) {
-      setSidebarCollapsed(true);
-    }
-  }, []);
-
-  const getPageTitle = () => {
-    if (pathname === '/search') return '02 / Cari Regulasi & Pasal';
-    if (pathname === '/regulations') return '03 / Katalog Peraturan RI';
-    if (pathname === '/disclaimer') return '04 / Peringatan & Batasan AI';
-    if (pathname.startsWith('/case/')) return 'Detail Kasus Editorial';
-    return '01 / Asisten Konsultasi Hukum AI';
-  };
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-[#fbfbfa] text-[#111215]">
@@ -48,7 +35,7 @@ export default function AppShell({ children }: AppShellProps) {
         onClose={() => setShowDisclaimer(false)} 
       />
 
-      {/* Collapsible Left Sidebar */}
+      {/* Collapsible Left Sidebar with Integrated Footer */}
       <AppSidebar
         collapsed={sidebarCollapsed}
         onToggle={() => setSidebarCollapsed(!sidebarCollapsed)}
@@ -56,68 +43,69 @@ export default function AppShell({ children }: AppShellProps) {
       />
 
       {/* Main View Area */}
-      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden">
-        {/* Compact Editorial Top Header Bar */}
-        <header className="h-16 bg-white swiss-border-b px-4 sm:px-8 flex items-center justify-between gap-4 shrink-0 z-20">
-          <div className="flex items-center gap-3 min-w-0">
+      <div className="flex-1 flex flex-col h-full min-w-0 overflow-hidden relative">
+        {/* Minimalist Top Bar (Screenshot style: '⚡ Mode Flash ▾' & 'ⓘ Info') */}
+        <header className="h-14 bg-transparent px-4 sm:px-8 flex items-center justify-between gap-4 shrink-0 z-20">
+          {/* Left Model Selector Pill */}
+          <div className="relative">
             <button
-              onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-              className="p-2 swiss-border hover:bg-neutral-100 transition cursor-pointer text-neutral-700"
-              title={sidebarCollapsed ? 'Perluas Menu Sidebar' : 'Sembunyikan Sidebar (Perbesar Chat)'}
-              aria-label="Toggle Sidebar"
+              onClick={() => setShowModelInfo(!showModelInfo)}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 backdrop-blur-xs swiss-border hover:bg-white transition text-xs font-mono font-semibold text-neutral-800 rounded-full shadow-2xs cursor-pointer"
             >
-              {sidebarCollapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
+              <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
+              <span>Mode Flash (Gemini 2.5)</span>
+              <ChevronDown className="w-3 h-3 text-neutral-400" />
             </button>
 
-            <div className="flex items-center gap-2 min-w-0">
-              <span className="editorial-meta text-[#c2410c] font-bold hidden sm:inline">
-                HUKUMAI
-              </span>
-              <span className="text-neutral-300 hidden sm:inline">•</span>
-              <span className="font-mono text-xs sm:text-sm font-bold text-neutral-800 truncate">
-                {getPageTitle()}
-              </span>
-            </div>
+            {/* Model Info Dropdown */}
+            {showModelInfo && (
+              <div className="absolute top-10 left-0 w-72 bg-white swiss-border p-4 shadow-xl text-xs font-mono z-50 animate-in fade-in slide-in-from-top-1 rounded-xl">
+                <div className="flex items-center justify-between pb-2 border-b border-neutral-100 mb-2">
+                  <span className="font-bold text-neutral-900 flex items-center gap-1.5">
+                    <Sparkles className="w-3.5 h-3.5 text-[#c2410c]" />
+                    Gemini 2.5 Flash
+                  </span>
+                  <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">
+                    ACTIVE
+                  </span>
+                </div>
+                <p className="text-neutral-600 leading-relaxed text-[11px] mb-3">
+                  Terintegrasi dengan Google Search Grounding untuk menelusuri naskah perundang-undangan dan regulasi JDIH pemerintah secara live.
+                </p>
+                <div className="text-[10.5px] text-neutral-500 bg-[#fbfbfa] p-2 border border-neutral-200 rounded space-y-1">
+                  <div>✓ Latensi Ultra-Rendah (~400ms)</div>
+                  <div>✓ 1 Juta Token Context Window</div>
+                  <div>✓ Korpus Regulasi Terverifikasi</div>
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Right Header Navigation & Actions */}
-          <div className="flex items-center gap-3 font-mono text-xs">
-            <div className="hidden md:flex items-center gap-2 text-neutral-500 text-[11px] mr-2">
-              <span className="inline-block w-2 h-2 rounded-full bg-emerald-500"></span>
-              <span>JDIHN · PERATURAN.GO.ID · BPK · MA · MK</span>
-            </div>
-
-            <Link
-              href="/search"
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 swiss-border bg-[#fbfbfa] hover:bg-neutral-100 transition text-neutral-700"
-            >
-              <Search className="w-3.5 h-3.5" />
-              <span>Cari Pasal</span>
-            </Link>
-
+          {/* Right Info / Batasan AI & GitHub */}
+          <div className="flex items-center gap-2 font-mono text-xs">
             <button
               onClick={() => setShowDisclaimer(true)}
-              className="flex items-center gap-1 px-2.5 py-1.5 text-amber-700 bg-amber-50 hover:bg-amber-100 swiss-border border-amber-300 transition cursor-pointer font-bold text-[11px]"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-neutral-600 hover:text-black hover:bg-white/80 transition cursor-pointer rounded-full text-xs font-mono"
             >
-              <AlertCircle className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-              <span className="hidden sm:inline">Batasan AI</span>
+              <Info className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Info & Batasan AI</span>
             </button>
 
             <a
               href="https://github.com/joshhh22/lawAI"
               target="_blank"
               rel="noopener noreferrer"
-              className="flex items-center gap-1.5 px-3 py-1.5 bg-[#111215] text-white hover:bg-[#c2410c] transition uppercase font-bold text-[11px]"
+              className="p-1.5 text-neutral-600 hover:text-black hover:bg-white/80 transition rounded-full"
+              title="GitHub Repository"
             >
-              <Code2 className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">GitHub</span>
+              <Code2 className="w-4 h-4" />
             </a>
           </div>
         </header>
 
-        {/* Scrollable Main Application Content (Expands to Full Width when Sidebar is collapsed) */}
-        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8 bg-[#fbfbfa]">
-          <div className="w-full max-w-7xl mx-auto">
+        {/* Scrollable Main Content Canvas */}
+        <main className="flex-1 overflow-y-auto px-4 sm:px-8 pb-8 bg-[#fbfbfa] flex flex-col">
+          <div className="w-full max-w-5xl mx-auto flex-1 flex flex-col">
             {children}
           </div>
         </main>
