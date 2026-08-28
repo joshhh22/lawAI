@@ -74,7 +74,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
                 className="flex items-center gap-1.5 px-3 py-1.5 bg-white/80 backdrop-blur-xs swiss-border hover:bg-white transition text-xs font-mono font-semibold text-neutral-800 rounded-full shadow-2xs cursor-pointer"
               >
                 <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                <span>Mode Flash (Gemini 2.5)</span>
+                <span>Mode Flash (Gemini 3.6)</span>
                 <ChevronDown className="w-3 h-3 text-neutral-400" />
               </button>
 
@@ -84,7 +84,7 @@ function AppShellContent({ children }: { children: React.ReactNode }) {
                   <div className="flex items-center justify-between pb-2 border-b border-neutral-100 mb-2">
                     <span className="font-bold text-neutral-900 flex items-center gap-1.5">
                       <Sparkles className="w-3.5 h-3.5 text-[#c2410c]" />
-                      Gemini 2.5 Flash
+                      Gemini 3.6 Flash
                     </span>
                     <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">
                       ACTIVE

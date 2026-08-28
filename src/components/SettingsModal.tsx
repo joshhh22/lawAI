@@ -185,7 +185,7 @@ export default function SettingsModal({ isOpen, onClose }: SettingsModalProps) {
               <div className="flex items-center justify-between">
                 <span className="flex items-center gap-1.5 font-semibold text-neutral-900">
                   <Zap className="w-3.5 h-3.5 text-amber-500 fill-amber-500" />
-                  Gemini 2.5 Flash
+                  Gemini 3.6 Flash
                 </span>
                 <span className="text-[10px] bg-emerald-100 text-emerald-800 px-1.5 py-0.5 rounded font-bold">
                   ACTIVE

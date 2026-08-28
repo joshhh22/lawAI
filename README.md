@@ -8,7 +8,7 @@
 
 ## 🌟 Fitur Utama & Desain
 
-- ⚡ **Gemini 2.5 Flash & Live Search Grounding**: Model AI generasi terbaru dengan latensi ultra-rendah dan kemampuan verifikasi data regulasi pemerintah secara *real-time*.
+- ⚡ **Gemini 3.6 Flash & Live Search Grounding**: Model AI generasi terbaru dengan latensi ultra-rendah dan kemampuan verifikasi data regulasi pemerintah secara *real-time*.
 - 🏛️ **Dasar Hukum Faktual BPK RI**: Setiap analisis menyertakan kutipan resmi bunyi Pasal, Ayat, status keberlakuan (*Berlaku/Diubah/Dicabut*), dan tombol langsung ke `peraturan.bpk.go.id`.
 - 🏷️ **Banner Status Kesimpulan (*Verdict Card*)**: Kotak ringkasan status hukum (*Melanggar Hukum / Berhak Menuntut / Delik Aduan / Sah Bersyarat*).
 - 💬 **Riwayat Percakapan Cerdas (*Chat History*)**: Sesi obrolan tersimpan otomatis dengan judul cerdas, waktu relatif, dan kolom pencarian riwayat.

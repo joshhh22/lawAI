@@ -25,7 +25,7 @@ export default function Header() {
         <div className="hidden md:flex items-center gap-4 text-neutral-400">
           <span>SUMBER: JDIHN · BPK · PERATURAN.GO.ID · MA · MK</span>
           <span>•</span>
-          <span>MODEL: GEMINI 2.5 FLASH</span>
+          <span>MODEL: GEMINI 3.6 FLASH</span>
         </div>
       </div>
 
