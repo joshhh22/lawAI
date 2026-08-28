@@ -1,69 +1,247 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState } from 'react';
+import CaseInput from '@/components/CaseInput';
+import AnalysisView from '@/components/AnalysisView';
+import EditorialLoader from '@/components/EditorialLoader';
+import { CaseAnalysis } from '@/lib/types';
+import { ShieldCheck, BookOpen, Scale, ArrowRight, Search, FileText } from 'lucide-react';
+import Link from 'next/link';
+
+export default function HomePage() {
+  const [analysis, setAnalysis] = useState<CaseAnalysis | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  const handleAnalyze = async (caseText: string) => {
+    setIsLoading(true);
+    setErrorMessage(null);
+    setAnalysis(null);
+
+    try {
+      const response = await fetch('/api/analyze', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ caseText }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Gagal menganalisis persoalan hukum.');
+      }
+
+      const data: CaseAnalysis = await response.json();
+      setAnalysis(data);
+
+      // Smooth scroll to analysis
+      setTimeout(() => {
+        window.scrollTo({ top: 300, behavior: 'smooth' });
+      }, 100);
+    } catch (err: any) {
+      setErrorMessage(err.message || 'Terjadi kesalahan sistem.');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.tsx
-            </code>{" "}
-            file.
+    <div className="space-y-16">
+      {/* Editorial Hero Section */}
+      <section className="space-y-6">
+        <div className="flex items-center gap-3">
+          <span className="editorial-meta text-[#c2410c] font-bold">
+            01 / SISTEM RETRIEVAL HUKUM DIGITAL
+          </span>
+          <span className="text-neutral-300">•</span>
+          <span className="editorial-meta text-neutral-500">
+            HUKUM POSITIF INDONESIA
+          </span>
+        </div>
+
+        <div className="space-y-2">
+          <h1 className="text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#111215] leading-[1.08] uppercase">
+            Pahami Hukum.<br />
+            <span className="font-serif italic font-normal text-neutral-800">Temukan Dasarnya.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="text-base sm:text-lg text-neutral-600 max-w-2xl font-mono leading-relaxed pt-2">
+            Ceritakan persoalan hukum Anda dengan bahasa sehari-hari. 
+            AI menelusuri undang-undang resmi, pasal yang relevan, dan menyajikan analisis yang dapat diverifikasi.
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+
+        {/* Case Input Area */}
+        <div className="pt-2">
+          <CaseInput onAnalyze={handleAnalyze} isLoading={isLoading} />
         </div>
-      </main>
+
+        {/* Error Alert */}
+        {errorMessage && (
+          <div className="p-4 bg-red-50 swiss-border border-red-300 text-red-900 text-xs font-mono">
+            <strong>Terjadi Kendala:</strong> {errorMessage}
+          </div>
+        )}
+
+        {/* Loading Progress State */}
+        {isLoading && <EditorialLoader />}
+
+        {/* Analysis Result View */}
+        {analysis && (
+          <div className="pt-6">
+            <AnalysisView analysis={analysis} onReset={() => setAnalysis(null)} />
+          </div>
+        )}
+      </section>
+
+      {/* 3 Core Editorial Principles (PRD Section 10 & 25) */}
+      <section className="swiss-border-t pt-12">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="space-y-3 bg-white swiss-border p-6">
+            <span className="editorial-number text-2xl text-[#c2410c] block">
+              01
+            </span>
+            <h3 className="font-bold text-sm uppercase tracking-wider font-mono text-[#111215]">
+              BERBASIS SUMBER RESMI
+            </h3>
+            <p className="text-xs text-neutral-600 leading-relaxed font-mono">
+              HukumAI tidak mengarang pasal. Jawaban dihasilkan berdasarkan rujukan korpus peraturan resmi pemerintah (JDIH, Peraturan.go.id, BPK, MA).
+            </p>
+          </div>
+
+          <div className="space-y-3 bg-white swiss-border p-6">
+            <span className="editorial-number text-2xl text-[#c2410c] block">
+              02
+            </span>
+            <h3 className="font-bold text-sm uppercase tracking-wider font-mono text-[#111215]">
+              DAPAT DIVERIFIKASI
+            </h3>
+            <p className="text-xs text-neutral-600 leading-relaxed font-mono">
+              Setiap klaim substansi hukum dilengkapi kartu rujukan pasal asli, status keberlakuan peraturan (aktif/diubah), dan tautan langsung ke naskah asli.
+            </p>
+          </div>
+
+          <div className="space-y-3 bg-white swiss-border p-6">
+            <span className="editorial-number text-2xl text-[#c2410c] block">
+              03
+            </span>
+            <h3 className="font-bold text-sm uppercase tracking-wider font-mono text-[#111215]">
+              BAHASA MANUSIA
+            </h3>
+            <p className="text-xs text-neutral-600 leading-relaxed font-mono">
+              Menerjemahkan kerumitan pasal perundang-undangan dan istilah hukum teknis ke dalam penjelasan yang lugas, terstruktur, dan mudah dimengerti.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Official Supported Sources Strip */}
+      <section className="bg-[#111215] text-white p-6 sm:p-8 swiss-border">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+          <div>
+            <span className="editorial-meta text-[#c2410c] block mb-1">
+              DATABASE DOKUMEN HUKUM
+            </span>
+            <h3 className="text-lg font-bold tracking-tight">
+              Terhubung dengan Jaringan Regulasi Nasional
+            </h3>
+            <p className="text-xs text-neutral-400 font-mono mt-1">
+              Mencakup UU Cipta Kerja, KUHP Nasional, UU ITE Revisi, UU Perlindungan Data Pribadi, KUHPerdata, dan PP teknis.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-3">
+            <Link
+              href="/search"
+              className="px-4 py-2.5 bg-white text-black hover:bg-[#c2410c] hover:text-white transition text-xs font-mono uppercase font-bold flex items-center gap-1.5"
+            >
+              <Search className="w-3.5 h-3.5" />
+              <span>Cari Database Pasal</span>
+            </Link>
+            <Link
+              href="/regulations"
+              className="px-4 py-2.5 swiss-border border-neutral-700 text-white hover:bg-neutral-800 transition text-xs font-mono uppercase font-bold flex items-center gap-1.5"
+            >
+              <BookOpen className="w-3.5 h-3.5" />
+              <span>Katalog Regulasi</span>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Popular Domain Modules */}
+      <section className="space-y-6">
+        <div className="flex items-center justify-between swiss-border-b pb-3">
+          <div className="flex items-center gap-2 editorial-meta text-neutral-900">
+            <span>02</span>
+            <span>/</span>
+            <span>EKSPLORASI BIDANG HUKUM POPULER</span>
+          </div>
+          <Link href="/regulations" className="text-xs font-mono text-[#c2410c] hover:underline flex items-center gap-1">
+            <span>Lihat Semua</span>
+            <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">KETENAGAKERJAAN</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              UU Cipta Kerja & PP 35/2021
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Aturan kompensasi PKWT, pesangon PHK, hak cuti, waktu kerja, dan larangan penahanan ijazah sepihak.
+            </p>
+          </div>
+
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">DIGITAL & ITE</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              UU No. 1/2024 (Revisi UU ITE)
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Pasal 27A pencemaran nama baik digital, delik aduan, hoaks online, dan batasan kritik di media sosial.
+            </p>
+          </div>
+
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">PRIVASI & DATA</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              UU No. 27/2022 (UU PDP)
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Perlindungan kebocoran data pribadi, larangan doxxing, dan sanksi teror pinjol sebar kontak darurat.
+            </p>
+          </div>
+
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">PERDATA & KONTRAK</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              KUHPerdata (Burgerlijk Wetboek)
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Syarat sah perjanjian (Pasal 1320), wanprestasi (Pasal 1243), dan perbuatan melawan hukum PMH (Pasal 1365).
+            </p>
+          </div>
+
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">KONSUMEN & BISNIS</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              UU No. 8/1999 Perlindungan Konsumen
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Larangan klausula baku sepihak "barang tidak dapat dikembalikan" dan hak ganti rugi barang cacat.
+            </p>
+          </div>
+
+          <div className="bg-white swiss-border p-5 space-y-2 hover:border-black transition">
+            <span className="editorial-meta text-neutral-500 block">PIDANA UMUM</span>
+            <h4 className="font-bold text-sm text-[#111215]">
+              KUHP (Wetboek van Strafrecht)
+            </h4>
+            <p className="text-xs text-neutral-600 font-mono">
+              Pasal 378 penipuan, Pasal 372 penggelapan, Pasal 368 pemerasan, dan ketentuan KUHP Nasional UU 1/2023.
+            </p>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }

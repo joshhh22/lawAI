@@ -1,26 +1,72 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --background: #fbfbfa;
+  --foreground: #111215;
+  --card-bg: #ffffff;
+  --border-line: #e2e0d8;
+  --muted-text: #5f6368;
+  --accent-vermilion: #c2410c;
+  --accent-navy: #1e3a8a;
+  --status-active: #15803d;
+  --status-amber: #b45309;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Swiss Modernism Grid & Structural Lines */
+.swiss-border {
+  border: 1px solid var(--border-line);
+}
+
+.swiss-border-b {
+  border-bottom: 1px solid var(--border-line);
+}
+
+.swiss-border-t {
+  border-top: 1px solid var(--border-line);
+}
+
+.swiss-border-r {
+  border-right: 1px solid var(--border-line);
+}
+
+.swiss-border-l {
+  border-left: 1px solid var(--border-line);
+}
+
+/* Editorial Monospace / Metadata Tags */
+.editorial-meta {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted-text);
+}
+
+.editorial-number {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f4f3ef;
+}
+::-webkit-scrollbar-thumb {
+  background: #d4d2cb;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #a8a69e;
 }
