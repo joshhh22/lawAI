@@ -36,6 +36,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
   const { t, language } = useLanguage();
   const [inputText, setInputText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [pendingUserText, setPendingUserText] = useState<string | null>(null);
   const [expandedSources, setExpandedSources] = useState<Record<string, boolean>>({});
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [showPresetsMenu, setShowPresetsMenu] = useState(false);
@@ -59,7 +60,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages, isLoading]);
+  }, [messages, isLoading, pendingUserText]);
 
   const handleSendMessage = async (textToSend?: string) => {
     const text = (textToSend || inputText).trim();
@@ -67,6 +68,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
 
     if (!textToSend) setInputText('');
     setShowPresetsMenu(false);
+    setPendingUserText(text);
     setIsLoading(true);
 
     try {
@@ -75,11 +77,15 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
         text: m.text
       }));
 
-      const res = await fetch('/api/analyze', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ caseText: text, chatHistory })
-      });
+      // Realistic deliberation pacing so user sees the 4 legal research steps
+      const [res] = await Promise.all([
+        fetch('/api/analyze', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ caseText: text, chatHistory })
+        }),
+        new Promise((resolve) => setTimeout(resolve, 1400))
+      ]);
 
       if (!res.ok) throw new Error('Gagal memproses konsultasi hukum.');
 
@@ -91,6 +97,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
       console.error('Error in chat:', error);
     } finally {
       setIsLoading(false);
+      setPendingUserText(null);
     }
   };
 
@@ -111,10 +118,12 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
     }));
   };
 
+  const isThreadActive = messages.length > 0 || pendingUserText !== null;
+
   return (
     <div className="w-full flex-1 flex flex-col justify-between relative min-h-[calc(100vh-100px)]">
       {/* Top action bar when messages exist */}
-      {messages.length > 0 && (
+      {isThreadActive && (
         <div className="flex items-center justify-between pb-4 swiss-border-b mb-6 animate-in fade-in">
           <div className="flex items-center gap-2">
             <span className="editorial-meta text-[#c2410c] font-bold">
@@ -122,7 +131,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
             </span>
             <span className="text-neutral-300">•</span>
             <span className="text-xs font-mono text-neutral-500">
-              {messages.filter((m) => m.sender === 'user').length} {language === 'en' ? 'Queries' : 'Pertanyaan'}
+              {messages.filter((m) => m.sender === 'user').length + (pendingUserText ? 1 : 0)} {language === 'en' ? 'Queries' : 'Pertanyaan'}
             </span>
           </div>
 
@@ -139,7 +148,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
       {/* Main Conversation / Hero Area */}
       <div className="flex-1 flex flex-col justify-center">
         {/* HERO CANVAS (Clean minimalist initial state) */}
-        {messages.length === 0 && (
+        {!isThreadActive && (
           <div className="my-auto py-12 px-4 text-center space-y-8 max-w-3xl mx-auto animate-in fade-in duration-300">
             {/* Title with Subtle Rhombus Graphic Accent */}
             <div className="relative inline-block py-2">
@@ -171,7 +180,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
         )}
 
         {/* Message Thread when Active */}
-        {messages.length > 0 && (
+        {isThreadActive && (
           <div className="space-y-8 pb-28">
             {messages.map((msg) => {
               const isUser = msg.sender === 'user';
@@ -422,10 +431,25 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
               );
             })}
 
-            {/* Loading State */}
-            {isLoading && (
-              <div className="max-w-2xl">
-                <EditorialLoader />
+            {/* Render Pending User Message and 4-Step Animated Legal Loader */}
+            {pendingUserText && (
+              <div className="space-y-4 animate-in fade-in duration-200">
+                <div className="flex flex-col items-end space-y-1">
+                  <div className="flex items-center gap-2 text-[11px] font-mono text-neutral-500 px-1">
+                    <span>{t.you}</span>
+                    <span>•</span>
+                    <span>{new Date().toLocaleTimeString(language === 'en' ? 'en-US' : 'id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
+                  </div>
+                  <div className="max-w-4xl swiss-border p-6 rounded-2xl bg-[#111215] text-[#fbfbfa] ml-8 rounded-tr-xs">
+                    <p className="text-[15px] leading-relaxed font-mono whitespace-pre-wrap">
+                      {pendingUserText}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="max-w-4xl">
+                  <EditorialLoader />
+                </div>
               </div>
             )}
 
