@@ -104,7 +104,7 @@ export default function LegalChatInterface({ onSwitchToDocumentView }: LegalChat
   const handleCopyMessage = (msg: ChatMessage) => {
     let copyContent = msg.text;
     if (msg.analysis) {
-      copyContent = `=== ${t.verdictTitle} (${msg.analysis.identifiedIssue}) ===\n\n${msg.analysis.legalVerdict?.statusText || msg.analysis.summary}\n\n${t.summaryTitle}:\n${msg.analysis.summary}\n\n${t.legalBasesTitle}:\n${msg.analysis.legalBases.map((b) => `- ${b.documentTitle} Pasal ${b.articleNumber}: "${b.content}" (Sumber: ${b.officialUrl})`).join('\n')}\n\n${t.analysisTitle}:\n${msg.analysis.analysis}\n\n${t.practicalStepsTitle}:\n${msg.analysis.actionableSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nSumber Resmi: law.web.id & peraturan.bpk.go.id`;
+      copyContent = `=== ${t.verdictTitle} (${msg.analysis.identifiedIssue}) ===\n\n${msg.analysis.legalVerdict?.statusText || msg.analysis.summary}\n\n${t.summaryTitle}:\n${msg.analysis.summary}\n\n${t.legalBasesTitle}:\n${msg.analysis.legalBases.map((b) => `- ${b.documentTitle} Pasal ${b.articleNumber}: "${b.content}" (Sumber: ${b.officialUrl})`).join('\n')}\n\n${t.analysisTitle}:\n${msg.analysis.analysis}\n\n${t.practicalStepsTitle}:\n${msg.analysis.actionableSteps.map((s, i) => `${i + 1}. ${s}`).join('\n')}\n\nSumber Resmi: cekhukum.web.id & peraturan.bpk.go.id`;
     }
     navigator.clipboard.writeText(copyContent);
     setCopiedId(msg.id);

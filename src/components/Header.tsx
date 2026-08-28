@@ -43,7 +43,7 @@ export default function Header() {
                   HUKUMAI
                 </span>
                 <span className="editorial-meta bg-neutral-200 text-neutral-800 px-1.5 py-0.5 text-[9px] font-semibold">
-                  law.web.id
+                  cekhukum.web.id
                 </span>
               </div>
               <p className="text-[11px] text-neutral-500 font-mono tracking-tight hidden sm:block">
